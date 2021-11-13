@@ -7,23 +7,25 @@ import {
 } from 'react-router-dom';
 
 import HomePage from './pages/HomePage';
-import PlayersPage from './pages/PlayersPage';
+// import PlayersPage from './pages/PlayersPage';
+// import MatchesPage from './pages/MatchesPage';
+
 import 'antd/dist/antd.css';
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "shards-ui/dist/css/shards.min.css"
-import MatchesPage from './pages/MatchesPage';
+
 
 ReactDOM.render(
   <div>
     <Router>
       <Switch>
         <Route exact
-							path="/"
+							path="/home"
 							render={() => (
 								<HomePage />
 							)}/>
-        <Route exact
+        {/* <Route exact
 							path="/players"
 							render={() => (
 								<PlayersPage />
@@ -32,7 +34,7 @@ ReactDOM.render(
 							path="/matches"
 							render={() => (
 								<MatchesPage />
-							)}/>
+							)}/> */}
       </Switch>
     </Router>
   </div>,
