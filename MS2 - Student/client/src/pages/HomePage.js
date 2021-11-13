@@ -96,7 +96,7 @@ class HomePage extends React.Component {
 
           <h3>Borough Information</h3>
 
-          <Table dataSource={this.state.boroughSummaryResults} columns={boroughSummaryColumns}/>
+          <Table dataSource={this.state.boroughSummaryResults} columns={boroughSummaryColumns} pagination={false}/>
 
         </div>
 
