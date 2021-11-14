@@ -24,14 +24,13 @@ async function borough_summary(req, res) {
     GROUP BY NeighborhoodBorough.Borough
     ),
     Borough_Crimes AS (
-    SELECT NeighborhoodBorough.Borough, COUNT(*) AS Crime_Count
-    FROM NeighborhoodBorough JOIN ZipCodeNeighborhood ON NeighborhoodBorough.Neighborhood = ZipCodeNeighborhood.Neighborhood JOIN Crime ON Crime.ZipCode = ZipCodeNeighborhood.ZipCode
-    WHERE Crime.Year = ${year}
-    GROUP BY NeighborhoodBorough.Borough
+    SELECT BoroughCrimesAllYears.Borough, BoroughCrimesAllYears.Crime_Count
+    FROM BoroughCrimesAllYears
+    WHERE BoroughCrimesAllYears.Year = ${year}
     )
     SELECT Borough_Crimes.Borough, Borough_Rents.Average_Rent, Borough_Crimes.Crime_Count
     FROM Borough_Crimes LEFT OUTER JOIN Borough_Rents ON Borough_Crimes.Borough = Borough_Rents.Borough
-    ORDER BY Borough_Rents.Borough;
+    ORDER BY Borough_Crimes.Borough;
     `, function (error, results, fields) {
     
         if (error) {

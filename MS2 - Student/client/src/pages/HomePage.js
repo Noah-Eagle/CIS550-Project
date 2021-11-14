@@ -24,6 +24,7 @@ const boroughSummaryColumns = [
     dataIndex: 'Average_Rent',
     key: 'Average_Rent',
     sorter: (a, b) => a.Average_Rent - b.Average_Rent
+    // Cell: props => new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'USD' }).format(props.value)
   },
   {
     title: 'Crime Count',
@@ -91,13 +92,12 @@ class HomePage extends React.Component {
   yearOnChange(value) {
 
       getBoroughSummary(value).then(res => {
-      console.log(res.results)
       this.setState({ boroughSummaryResults: res.results })
-    
+      console.log(this.state.boroughSummaryResults)
     })
   }
 
-
+  
   
   render() {
 
@@ -106,7 +106,12 @@ class HomePage extends React.Component {
       <div>
       <MenuBar />
       <div style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }}>
+
+        <div style={{ marginTop: '5vh', marginBottom: '5vh' }}>
         <h3>Borough Information by Year</h3>
+        </div>
+
+        <div style={{ marginBottom: '3vh' }}>
         <Select defaultValue={2020} style={{ width: 120 }} onChange={this.yearOnChange}>
           <Option value={2020}>2020</Option>
           <Option value={2019}>2019</Option>
@@ -120,7 +125,8 @@ class HomePage extends React.Component {
           <Option value={2011}>2011</Option>
           <Option value={2010}>2010</Option>
         </Select>
-        
+        </div>
+
         <Table dataSource={this.state.boroughSummaryResults} columns={boroughSummaryColumns} pagination={false}></Table>
 
       </div>
