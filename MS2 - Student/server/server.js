@@ -12,8 +12,9 @@ app.use(cors({
     origin: '*'
 }));
 
-// Route 1 - register as GET 
-app.get('/home', routes.home)
+
+
+app.get('/home', routes.borough_summary)
 
 // // Route 4 - register as GET 
 // app.get('/players', routes.all_players)

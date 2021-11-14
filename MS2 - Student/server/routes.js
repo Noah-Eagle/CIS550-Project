@@ -12,24 +12,26 @@ const connection = mysql.createConnection({
 });
 connection.connect();
 
-async function home(req, res) {
+async function borough_summary(req, res) {
+
+    const year = req.query.year ? req.query.year : 2020
     
     connection.query(`
     WITH Borough_Rents AS (
     SELECT NeighborhoodBorough.Borough, AVG(Rent.AvgRent) AS Average_Rent
     FROM NeighborhoodBorough JOIN Rent ON NeighborhoodBorough.Neighborhood = Rent.Neighborhood
-    WHERE Rent.Year = 2020
+    WHERE Rent.Year = ${year}
     GROUP BY NeighborhoodBorough.Borough
     ),
     Borough_Crimes AS (
     SELECT NeighborhoodBorough.Borough, COUNT(*) AS Crime_Count
     FROM NeighborhoodBorough JOIN ZipCodeNeighborhood ON NeighborhoodBorough.Neighborhood = ZipCodeNeighborhood.Neighborhood JOIN Crime ON Crime.ZipCode = ZipCodeNeighborhood.ZipCode
-    WHERE Crime.Year = 2020
+    WHERE Crime.Year = ${year}
     GROUP BY NeighborhoodBorough.Borough
     )
     SELECT Borough_Crimes.Borough, Borough_Rents.Average_Rent, Borough_Crimes.Crime_Count
     FROM Borough_Crimes LEFT OUTER JOIN Borough_Rents ON Borough_Crimes.Borough = Borough_Rents.Borough
-    ORDER BY Borough_Crimes.Borough;
+    ORDER BY Borough_Rents.Borough;
     `, function (error, results, fields) {
     
         if (error) {
@@ -415,7 +417,7 @@ async function home(req, res) {
 // }
 
 module.exports = {
-    home,
+    borough_summary
     // jersey,
     // all_matches,
     // all_players,

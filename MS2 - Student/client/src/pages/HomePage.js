@@ -47,6 +47,10 @@ class HomePage extends React.Component {
   //     pagination: null  
     }
 
+    this.yearOnChange = this.yearOnChange.bind(this)
+
+  }
+
   //   this.leagueOnChange = this.leagueOnChange.bind(this)
   //   this.goToMatch = this.goToMatch.bind(this)
   // }
@@ -75,11 +79,22 @@ class HomePage extends React.Component {
   //     this.setState({ playersResults: res.results })
   //   })
 
-    getBoroughSummary().then(res => {
+  componentDidMount() {
+
+    getBoroughSummary(2020).then(res => {
+      this.setState({ boroughSummaryResults: res.results })
+
+    })
+    
+  }
+
+  yearOnChange(value) {
+
+      getBoroughSummary(value).then(res => {
       console.log(res.results)
       this.setState({ boroughSummaryResults: res.results })
+    
     })
- 
   }
 
 
@@ -89,23 +104,47 @@ class HomePage extends React.Component {
     return (
 
       <div>
-
-        <MenuBar />
-
-        <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
-
-          <h3>Borough Information</h3>
-
-          <Table dataSource={this.state.boroughSummaryResults} columns={boroughSummaryColumns} pagination={false}/>
-
-        </div>
+      <MenuBar />
+      <div style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }}>
+        <h3>Borough Information by Year</h3>
+        <Select defaultValue={2020} style={{ width: 120 }} onChange={this.yearOnChange}>
+          <Option value={2020}>2020</Option>
+          <Option value={2019}>2019</Option>
+          <Option value={2018}>2018</Option>
+          <Option value={2017}>2017</Option>
+          <Option value={2016}>2016</Option>
+          <Option value={2015}>2015</Option>
+          <Option value={2014}>2014</Option>
+          <Option value={2013}>2013</Option>
+          <Option value={2012}>2012</Option>
+          <Option value={2011}>2011</Option>
+          <Option value={2010}>2010</Option>
+        </Select>
+        
+        <Table dataSource={this.state.boroughSummaryResults} columns={boroughSummaryColumns} pagination={false}></Table>
 
       </div>
+
+
+    </div>        
+
+
+      // <div>
+
+      //   <MenuBar />
+
+      //   <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
+
+      //     <h3>Borough Information</h3>
+
+      //     <Table dataSource={this.state.boroughSummaryResults} columns={boroughSummaryColumns} pagination={false}/>
+
+      //   </div>
+
+      // </div>
     )
   }
 
 }
-
-
 
 export default HomePage
