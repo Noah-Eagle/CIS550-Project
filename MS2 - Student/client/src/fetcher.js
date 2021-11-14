@@ -1,11 +1,12 @@
 import config from './config.json'
 
-const getBoroughSummary = async () => {
-    var res = await fetch(`http://${config.server_host}:${config.server_port}/home`, {
+const getBoroughSummary = async (year) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/home?year=${year}`, {
         method: 'GET',
     })
     return res.json()
 }
+
 
 // const getAllMatches = async (page, pagesize, league) => {
 //     var res = await fetch(`http://${config.server_host}:${config.server_port}/matches/${league}?page=${page}&pagesize=${pagesize}`, {
