@@ -1,13 +1,13 @@
 import React from 'react';
 import {
   Table,
-  Pagination,
   Select
-} from 'antd'
-
+} from 'antd';
 import MenuBar from '../components/MenuBar';
-import { getBoroughSummary } from '../fetcher'
-const { Column, ColumnGroup } = Table;
+import { getBoroughSummary } from '../fetcher';
+import { Bar } from 'react-chartjs-2';
+
+
 const { Option } = Select;
 
 
@@ -42,6 +42,8 @@ class HomePage extends React.Component {
 
     this.state = {
       boroughSummaryResults: [],
+      boroughlabels: [],
+      rentdata: []
   //     matchesPageNumber: 1,
   //     matchesPageSize: 10,
   //     playersResults: [],
@@ -85,6 +87,9 @@ class HomePage extends React.Component {
     getBoroughSummary(2020).then(res => {
       this.setState({ boroughSummaryResults: res.results })
 
+      this.state.boroughSummaryResults.forEach(element => this.state.boroughlabels.push(element.Borough))
+      this.state.boroughSummaryResults.forEach(element => this.state.rentdata.push(element.Average_Rent));
+
     })
     
   }
@@ -93,14 +98,17 @@ class HomePage extends React.Component {
 
       getBoroughSummary(value).then(res => {
       this.setState({ boroughSummaryResults: res.results })
-      console.log(this.state.boroughSummaryResults)
     })
+
+    // boroughs = this.state.boroughSummaryResults.results.forEach(element => {
+    //       element.Borough
+    // });
+
   }
 
-  
-  
-  render() {
 
+  render() {
+    console.log(this.state.rentdata)
     return (
 
       <div>
@@ -108,7 +116,7 @@ class HomePage extends React.Component {
       <div style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }}>
 
         <div style={{ marginTop: '5vh', marginBottom: '5vh' }}>
-        <h3>Borough Information by Year</h3>
+        <h4>Borough Information by Year</h4>
         </div>
 
         <div style={{ marginBottom: '3vh' }}>
@@ -131,23 +139,10 @@ class HomePage extends React.Component {
 
       </div>
 
+      {/* <Bar data={state}></Bar> */}
 
-    </div>        
+   </div>
 
-
-      // <div>
-
-      //   <MenuBar />
-
-      //   <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
-
-      //     <h3>Borough Information</h3>
-
-      //     <Table dataSource={this.state.boroughSummaryResults} columns={boroughSummaryColumns} pagination={false}/>
-
-      //   </div>
-
-      // </div>
     )
   }
 
