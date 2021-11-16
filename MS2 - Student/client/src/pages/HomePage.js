@@ -5,7 +5,7 @@ import {
 } from 'antd';
 import MenuBar from '../components/MenuBar';
 import { getBoroughSummary } from '../fetcher';
-import { Bar } from 'react-chartjs-2';
+import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Label } from 'recharts';
 
 
 const { Option } = Select;
@@ -42,8 +42,9 @@ class HomePage extends React.Component {
 
     this.state = {
       boroughSummaryResults: [],
-      boroughlabels: [],
-      rentdata: []
+      // boroughlabels: [],
+      // rentdata: [],
+      // crimedata: []
   //     matchesPageNumber: 1,
   //     matchesPageSize: 10,
   //     playersResults: [],
@@ -87,9 +88,9 @@ class HomePage extends React.Component {
     getBoroughSummary(2020).then(res => {
       this.setState({ boroughSummaryResults: res.results })
 
-      this.state.boroughSummaryResults.forEach(element => this.state.boroughlabels.push(element.Borough))
-      this.state.boroughSummaryResults.forEach(element => this.state.rentdata.push(element.Average_Rent));
-
+      // this.state.boroughSummaryResults.forEach(element => this.state.boroughlabels.push(element.Borough))
+      // this.state.boroughSummaryResults.forEach(element => this.state.rentdata.push(element.Average_Rent))
+      // this.state.boroughSummaryResults.forEach(element => this.state.crimedata.push(element.Crime_Count))
     })
     
   }
@@ -99,27 +100,24 @@ class HomePage extends React.Component {
       getBoroughSummary(value).then(res => {
       this.setState({ boroughSummaryResults: res.results })
     })
-
-    // boroughs = this.state.boroughSummaryResults.results.forEach(element => {
-    //       element.Borough
-    // });
-
   }
 
 
   render() {
-    console.log(this.state.rentdata)
+
+    console.log(this.state.crimedata)
+
     return (
 
       <div>
       <MenuBar />
       <div style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }}>
 
-        <div style={{ marginTop: '5vh', marginBottom: '5vh' }}>
+        <div style={{ marginTop: '3vh', marginBottom: '3vh' }}>
         <h4>Borough Information by Year</h4>
         </div>
 
-        <div style={{ marginBottom: '3vh' }}>
+        <div style={{ marginBottom: '2vh' }}>
         <Select defaultValue={2020} style={{ width: 120 }} onChange={this.yearOnChange}>
           <Option value={2020}>2020</Option>
           <Option value={2019}>2019</Option>
@@ -139,9 +137,73 @@ class HomePage extends React.Component {
 
       </div>
 
-      {/* <Bar data={state}></Bar> */}
+      
 
-   </div>
+    <div style={{ width: '45vw', float: 'left', margin: '0 auto', marginTop: '5vh', marginLeft: '5vh'}}>
+
+      <h4>Average Rent by Borough</h4>
+
+      <ResponsiveContainer width='100%' aspect={2.5}>
+        <BarChart
+          width={500}
+          height={300}
+          data={this.state.boroughSummaryResults}
+        >
+          <CartesianGrid strokeDasharray='3 3' />
+          <XAxis dataKey='Borough' />
+          <YAxis domain={[0, 3700]}/>
+          <Tooltip formatter={(value) => new Intl.NumberFormat('en', { style: 'currency', currency: 'USD' }).format(value)}/>
+          <Bar dataKey='Average_Rent' name='Average Rent' fill='#007bff' />
+        </BarChart>
+      </ResponsiveContainer>
+
+    </div>
+
+
+
+      <div style={{ width: '35vw', height: '45vh', margin: '0 auto', marginTop: '10vh', paddingBottom: 120}}>
+        <Bar 
+          data={{
+            labels: this.state.boroughlabels,
+            datasets: [
+              {
+              data: this.state.rentdata,
+              backgroundColor: 'lightblue',
+              }
+            ]
+          }}
+          options={{
+            title: {
+              
+            },
+            legend: {
+              display: false
+            },
+            scales: {
+              yAxes: [
+                {
+                  scaleLabel: {
+                    display: true,
+                    labelString: 'Average Rent (USD)'
+
+                  }
+                }
+              ],
+              xAxes: [
+                {
+                  scaleLabel: {
+                    labelString: 'Borough',
+                    display: true,
+                    
+                  }
+                }
+              ]
+            }
+          }}
+          >
+      </Bar>
+    </div>
+  </div>
 
     )
   }
