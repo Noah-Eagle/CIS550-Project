@@ -17,14 +17,13 @@ const boroughSummaryColumns = [
     dataIndex: 'Borough',
     key: 'Borough',
     sorter: (a, b) => a.Borough.localeCompare(b.Borough),
-    // render: (text, row) => <a href={`/players?id=${row.PlayerId}`}>{text}</a>
   },
   {
     title: 'Average Rent',
     dataIndex: 'Average_Rent',
     key: 'Average_Rent',
-    sorter: (a, b) => a.Average_Rent - b.Average_Rent
-    // Cell: props => new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'USD' }).format(props.value)
+    sorter: (a, b) => a.Average_Rent - b.Average_Rent,
+    // try adding formatter here?
   },
   {
     title: 'Crime Count',
@@ -42,55 +41,19 @@ class HomePage extends React.Component {
 
     this.state = {
       boroughSummaryResults: [],
-      // boroughlabels: [],
-      // rentdata: [],
-      // crimedata: []
-  //     matchesPageNumber: 1,
-  //     matchesPageSize: 10,
-  //     playersResults: [],
-  //     pagination: null  
+
     }
 
     this.yearOnChange = this.yearOnChange.bind(this)
 
   }
 
-  //   this.leagueOnChange = this.leagueOnChange.bind(this)
-  //   this.goToMatch = this.goToMatch.bind(this)
-  // }
-
-
-  // goToMatch(matchId) {
-  //   window.location = `/matches?id=${matchId}`
-  // }
-
-  // leagueOnChange(value) {
-  //   // TASK 2: this value should be used as a parameter to call getAllMatches in fetcher.js with the parameters page and pageSize set to null
-  //   // then, matchesResults in state should be set to the results returned - see a similar function call in componentDidMount()
-  //   getAllMatches(null, null, value).then(res => {
-  //     this.setState({ matchesResults: res.results })
-  //   })
-  // }
-
-  // componentDidMount() {
-  //   getAllMatches(null, null, 'D1').then(res => {
-  //     this.setState({ matchesResults: res.results })
-  //   })
-
-  //   getAllPlayers().then(res => {
-  //     console.log(res.results)
-  //     // TASK 1: set the correct state attribute to res.results
-  //     this.setState({ playersResults: res.results })
-  //   })
 
   componentDidMount() {
 
     getBoroughSummary(2020).then(res => {
       this.setState({ boroughSummaryResults: res.results })
 
-      // this.state.boroughSummaryResults.forEach(element => this.state.boroughlabels.push(element.Borough))
-      // this.state.boroughSummaryResults.forEach(element => this.state.rentdata.push(element.Average_Rent))
-      // this.state.boroughSummaryResults.forEach(element => this.state.crimedata.push(element.Crime_Count))
     })
     
   }
