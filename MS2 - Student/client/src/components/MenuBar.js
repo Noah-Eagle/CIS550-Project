@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
     Navbar,
@@ -11,7 +10,8 @@ import {
 class MenuBar extends React.Component {
     render() {
         return(
-            <Navbar type="dark" theme="primary" expand="md">
+
+      <Navbar type="dark" theme="primary" expand="md">
         <NavbarBrand href="/home">NYC Neighborhood Finder</NavbarBrand>
           <Nav navbar>
           <NavItem>
@@ -31,6 +31,7 @@ class MenuBar extends React.Component {
             </NavItem> */}
           </Nav>
       </Navbar>
+
         )
     }
 }
