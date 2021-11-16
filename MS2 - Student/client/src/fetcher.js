@@ -7,6 +7,12 @@ const getBoroughSummary = async (year) => {
     return res.json()
 }
 
+const getBoroughTrends = async (borough) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/borough-trends?borough=${borough}`, {
+        method: 'GET',
+    })
+    return res.json()
+}
 
 // const getAllMatches = async (page, pagesize, league) => {
 //     var res = await fetch(`http://${config.server_host}:${config.server_port}/matches/${league}?page=${page}&pagesize=${pagesize}`, {
@@ -54,7 +60,8 @@ const getBoroughSummary = async (year) => {
 
 
 export {
-    getBoroughSummary
+    getBoroughSummary,
+    getBoroughTrends
     // getAllMatches,
     // getAllPlayers,
     // getMatch,
