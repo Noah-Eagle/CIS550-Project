@@ -6,7 +6,7 @@ import {
 import MenuBar from '../components/MenuBar';
 import { getBoroughSummary } from '../fetcher';
 import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Label } from 'recharts';
-
+import { Button } from "shards-react";
 
 const { Option } = Select;
 
@@ -105,7 +105,6 @@ class HomePage extends React.Component {
 
   render() {
 
-    console.log(this.state.crimedata)
 
     return (
 
@@ -114,10 +113,13 @@ class HomePage extends React.Component {
       <div style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }}>
 
         <div style={{ marginTop: '2vh', marginBottom: '2vh' }}>
-        <h4>Borough Information by Year</h4>
-        </div>
 
-        <div style={{ marginBottom: '2vh' }}>
+          <h4>Borough Information</h4>
+
+        </div>
+      
+
+        <div style={{ width: '7vw', float: 'left', marginBottom: '2vh', marginTop: '0.5vh' }}>
         <Select defaultValue={2020} style={{ width: 120 }} onChange={this.yearOnChange}>
           <Option value={2020}>2020</Option>
           <Option value={2019}>2019</Option>
@@ -131,6 +133,10 @@ class HomePage extends React.Component {
           <Option value={2011}>2011</Option>
           <Option value={2010}>2010</Option>
         </Select>
+        </div>
+
+        <div style={{ width: '7vw', float: 'left', marginBottom: '2vh'}}>
+          <Button variant="outline-primary" href="/borough-trends">View Trends</Button>
         </div>
 
         <Table dataSource={this.state.boroughSummaryResults} columns={boroughSummaryColumns} pagination={false}></Table>
