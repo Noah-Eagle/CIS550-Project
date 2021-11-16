@@ -16,6 +16,8 @@ app.use(cors({
 
 app.get('/home', routes.borough_summary)
 
+app.get('/borough-trends', routes.borough_trends)
+
 // // Route 4 - register as GET 
 // app.get('/players', routes.all_players)
 
