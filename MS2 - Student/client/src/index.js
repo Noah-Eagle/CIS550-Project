@@ -7,7 +7,7 @@ import {
 } from 'react-router-dom';
 
 import HomePage from './pages/HomePage';
-// import PlayersPage from './pages/PlayersPage';
+import BoroughTrendsPage from './pages/BoroughTrendsPage';
 // import MatchesPage from './pages/MatchesPage';
 
 import 'antd/dist/antd.css';
@@ -25,12 +25,12 @@ ReactDOM.render(
 							render={() => (
 								<HomePage />
 							)}/>
-        {/* <Route exact
-							path="/players"
-							render={() => (
-								<PlayersPage />
-							)}/>
         <Route exact
+							path="/borough-trends"
+							render={() => (
+								<BoroughTrendsPage />
+							)}/>
+        {/* <Route exact
 							path="/matches"
 							render={() => (
 								<MatchesPage />

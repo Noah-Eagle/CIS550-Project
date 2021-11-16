@@ -113,7 +113,7 @@ class HomePage extends React.Component {
       <MenuBar />
       <div style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }}>
 
-        <div style={{ marginTop: '3vh', marginBottom: '3vh' }}>
+        <div style={{ marginTop: '2vh', marginBottom: '2vh' }}>
         <h4>Borough Information by Year</h4>
         </div>
 
@@ -139,9 +139,9 @@ class HomePage extends React.Component {
 
       
 
-    <div style={{ width: '45vw', float: 'left', margin: '0 auto', marginTop: '5vh', marginLeft: '5vh'}}>
+    <div style={{ width: '45vw', float: 'left', margin: '0 auto', marginTop: '2vh', marginLeft: '5vh'}}>
 
-      <h4>Average Rent by Borough</h4>
+      <h4 style={{textAlign: 'center'}}>Average Rent</h4>
 
       <ResponsiveContainer width='100%' aspect={2.5}>
         <BarChart
@@ -160,49 +160,28 @@ class HomePage extends React.Component {
     </div>
 
 
+    <div style={{ width: '45vw', float: 'right', margin: '0 auto', marginTop: '2vh', marginRight: '5vh'}}>
 
-      <div style={{ width: '35vw', height: '45vh', margin: '0 auto', marginTop: '10vh', paddingBottom: 120}}>
-        <Bar 
-          data={{
-            labels: this.state.boroughlabels,
-            datasets: [
-              {
-              data: this.state.rentdata,
-              backgroundColor: 'lightblue',
-              }
-            ]
-          }}
-          options={{
-            title: {
-              
-            },
-            legend: {
-              display: false
-            },
-            scales: {
-              yAxes: [
-                {
-                  scaleLabel: {
-                    display: true,
-                    labelString: 'Average Rent (USD)'
+      <h4 style={{textAlign: 'center'}}>Crime Count</h4>
 
-                  }
-                }
-              ],
-              xAxes: [
-                {
-                  scaleLabel: {
-                    labelString: 'Borough',
-                    display: true,
-                    
-                  }
-                }
-              ]
-            }
-          }}
-          >
-      </Bar>
+      <ResponsiveContainer width='100%' aspect={2.5}>
+        <BarChart
+          width={500}
+          height={300}
+          data={this.state.boroughSummaryResults}
+        >
+          <CartesianGrid strokeDasharray='3 3' />
+          <XAxis dataKey='Borough' />
+          <YAxis domain={[0, 145000]}/>
+          <Tooltip formatter={(value) => new Intl.NumberFormat('en').format(value)}/>
+          <Bar dataKey='Crime_Count' name='Crime Count' fill='#007bff' />
+        </BarChart>
+      </ResponsiveContainer>
+
     </div>
+
+
+
   </div>
 
     )

@@ -46,6 +46,34 @@ async function borough_summary(req, res) {
 
 }
 
+async function borough_trends(req, res) {
+
+    const borough = req.query.borough ? req.query.borough : 'Bronx'
+    
+    connection.query(`
+    WITH RentBoroughYear AS (
+    SELECT NeighborhoodBorough.Borough, Rent.Year, AVG(Rent.AvgRent) AS Average_Rent
+    FROM Rent
+    JOIN NeighborhoodBorough ON Rent.Neighborhood = NeighborhoodBorough.Neighborhood
+    GROUP BY NeighborhoodBorough.Borough, Rent.Year
+    )
+    SELECT BoroughCrimesAllYears.Year, BoroughCrimesAllYears.Crime_Count, RentBoroughYear.Average_Rent
+    FROM BoroughCrimesAllYears LEFT JOIN RentBoroughYear ON BoroughCrimesAllYears.Borough = RentBoroughYear.Borough AND BoroughCrimesAllYears.Year = RentBoroughYear.Year
+    WHERE BoroughCrimesAllYears.Borough = '${borough}'
+    `, function (error, results, fields) {
+    
+        if (error) {
+            console.log(error)
+            res.json({ error: error })
+        }
+
+        else if (results) {
+            res.json({ results: results })
+        }
+
+    });
+
+}
 
 
 
@@ -416,7 +444,8 @@ async function borough_summary(req, res) {
 // }
 
 module.exports = {
-    borough_summary
+    borough_summary,
+    borough_trends
     // jersey,
     // all_matches,
     // all_players,
