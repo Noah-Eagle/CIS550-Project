@@ -16,55 +16,20 @@ class BoroughTrendsPage extends React.Component {
 
     this.state = {
       boroughTrendsResults: [],
-      // boroughlabels: [],
-      // rentdata: [],
-      // crimedata: []
-  //     matchesPageNumber: 1,
-  //     matchesPageSize: 10,
-  //     playersResults: [],
-  //     pagination: null  
+
     }
 
     this.boroughOnChange = this.boroughOnChange.bind(this)
 
   }
 
-  //   this.leagueOnChange = this.leagueOnChange.bind(this)
-  //   this.goToMatch = this.goToMatch.bind(this)
-  // }
-
-
-  // goToMatch(matchId) {
-  //   window.location = `/matches?id=${matchId}`
-  // }
-
-  // leagueOnChange(value) {
-  //   // TASK 2: this value should be used as a parameter to call getAllMatches in fetcher.js with the parameters page and pageSize set to null
-  //   // then, matchesResults in state should be set to the results returned - see a similar function call in componentDidMount()
-  //   getAllMatches(null, null, value).then(res => {
-  //     this.setState({ matchesResults: res.results })
-  //   })
-  // }
-
-  // componentDidMount() {
-  //   getAllMatches(null, null, 'D1').then(res => {
-  //     this.setState({ matchesResults: res.results })
-  //   })
-
-  //   getAllPlayers().then(res => {
-  //     console.log(res.results)
-  //     // TASK 1: set the correct state attribute to res.results
-  //     this.setState({ playersResults: res.results })
-  //   })
 
   componentDidMount() {
 
     getBoroughTrends('Bronx').then(res => {
       this.setState({ boroughTrendsResults: res.results })
         console.log(this.state.boroughTrendsResults)
-      // this.state.boroughSummaryResults.forEach(element => this.state.boroughlabels.push(element.Borough))
-      // this.state.boroughSummaryResults.forEach(element => this.state.rentdata.push(element.Average_Rent))
-      // this.state.boroughSummaryResults.forEach(element => this.state.crimedata.push(element.Crime_Count))
+
     })
     
   }
@@ -123,7 +88,7 @@ class BoroughTrendsPage extends React.Component {
 
     <div style={{ width: '45vw', float: 'right', margin: '0 auto', marginTop: '2vh', marginRight: '5vh'}}>
 
-      <h4 style={{textAlign: 'center'}}>Crime Count</h4>
+      <h4 style={{textAlign: 'center'}}>Crime Count Over Time</h4>
 
       <ResponsiveContainer width='100%' aspect={2.5}>
         <LineChart
@@ -138,20 +103,6 @@ class BoroughTrendsPage extends React.Component {
           <Line dataKey='Crime_Count' name='Crime Count' fill='#007bff' />
         </LineChart>
       </ResponsiveContainer>
-
-      {/* <ResponsiveContainer width='100%' aspect={2.5}>
-        <BarChart
-          width={500}
-          height={300}
-          data={this.state.boroughSummaryResults}
-        >
-          <CartesianGrid strokeDasharray='3 3' />
-          <XAxis dataKey='Borough' />
-          <YAxis domain={[0, 145000]}/>
-          <Tooltip formatter={(value) => new Intl.NumberFormat('en').format(value)}/>
-          <Bar dataKey='Crime_Count' name='Crime Count' fill='#007bff' />
-        </BarChart>
-      </ResponsiveContainer> */}
 
     </div>
 

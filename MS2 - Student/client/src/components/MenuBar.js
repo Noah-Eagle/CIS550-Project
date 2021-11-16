@@ -5,45 +5,45 @@ import {
     Nav,
     NavItem,
     NavLink,
-    Dropdown,
-    DropdownToggle,
-    DropdownMenu,
-    DropdownItem
+    // Dropdown,
+    // DropdownToggle,
+    // DropdownMenu,
+    // DropdownItem
   } from "shards-react";
 
 class MenuBar extends React.Component {
 
 // dropdown code begins
 
-  constructor(props) {
-    super(props);
+  // constructor(props) {
+  //   super(props);
 
-    this.toggleDropdown = this.toggleDropdown.bind(this);
-    this.toggleNavbar = this.toggleNavbar.bind(this);
+  //   this.toggleDropdown = this.toggleDropdown.bind(this);
+  //   this.toggleNavbar = this.toggleNavbar.bind(this);
 
-    this.state = {
-      dropdownOpen: false,
-      collapseOpen: false
-    };
-  }
+  //   this.state = {
+  //     dropdownOpen: false,
+  //     collapseOpen: false
+  //   };
+  // }
 
-  toggleDropdown() {
-    this.setState({
-      ...this.state,
-      ...{
-        dropdownOpen: !this.state.dropdownOpen
-      }
-    });
-  }
+  // toggleDropdown() {
+  //   this.setState({
+  //     ...this.state,
+  //     ...{
+  //       dropdownOpen: !this.state.dropdownOpen
+  //     }
+  //   });
+  // }
 
-  toggleNavbar() {
-    this.setState({
-      ...this.state,
-      ...{
-        collapseOpen: !this.state.collapseOpen
-      }
-    });
-  }
+  // toggleNavbar() {
+  //   this.setState({
+  //     ...this.state,
+  //     ...{
+  //       collapseOpen: !this.state.collapseOpen
+  //     }
+  //   });
+  // }
 
   // dropdown code ends
 
