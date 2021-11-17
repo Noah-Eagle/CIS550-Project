@@ -14,6 +14,20 @@ const getBoroughTrends = async (borough) => {
     return res.json()
 }
 
+const getFilteredRents = async (low_rent_bound, high_rent_bound) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/filter/rents?low_rent_bound=${low_rent_bound}&high_rent_bound=${high_rent_bound}`, {
+        method: 'GET',
+    })
+    return res.json()
+}
+
+const getFilteredCrime = async (felony_limit, gender_limit, age_limit, gender, age_range) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/filter/crimes?felony_limit=${felony_limit}&gender_limit=${gender_limit}&age_limit=${age_limit}&gender=${gender}&age_range=${age_range}`, {
+        method: 'GET',
+    })
+    return res.json()
+}
+
 // const getAllMatches = async (page, pagesize, league) => {
 //     var res = await fetch(`http://${config.server_host}:${config.server_port}/matches/${league}?page=${page}&pagesize=${pagesize}`, {
 //         method: 'GET',
@@ -61,7 +75,9 @@ const getBoroughTrends = async (borough) => {
 
 export {
     getBoroughSummary,
-    getBoroughTrends
+    getBoroughTrends,
+    getFilteredRents,
+    getFilteredCrime
     // getAllMatches,
     // getAllPlayers,
     // getMatch,
