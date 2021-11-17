@@ -18,6 +18,10 @@ app.get('/home', routes.borough_summary)
 
 app.get('/borough-trends', routes.borough_trends)
 
+app.get('/filter/rents', routes.rent_filter)
+
+app.get('/filter/crimes', routes.crime_filter)
+
 // // Route 4 - register as GET 
 // app.get('/players', routes.all_players)
 

@@ -8,6 +8,7 @@ import {
 
 import HomePage from './pages/HomePage';
 import BoroughTrendsPage from './pages/BoroughTrendsPage';
+import FilterPage from './pages/FilterPage';
 // import MatchesPage from './pages/MatchesPage';
 
 import 'antd/dist/antd.css';
@@ -29,6 +30,11 @@ ReactDOM.render(
 							path="/borough-trends"
 							render={() => (
 								<BoroughTrendsPage />
+							)}/>
+		<Route exact
+							path="/filter"
+							render={() => (
+								<FilterPage />
 							)}/>
         {/* <Route exact
 							path="/matches"
