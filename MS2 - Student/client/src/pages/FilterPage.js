@@ -322,7 +322,7 @@ class FilterPage extends React.Component {
                                 <Option value="18-24">18-24</Option>
                                 <Option value="25-44">25-44</Option>
                                 <Option value="45-64">45-64</Option>
-                                <Option value="65+">65+</Option>
+                                <Option value="65%2B">65+</Option>
                             </Select>
                         </FormGroup></Col>
                         <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
