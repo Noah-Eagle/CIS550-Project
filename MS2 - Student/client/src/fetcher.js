@@ -1,7 +1,7 @@
 import config from './config.json'
 
-const getBoroughSummary = async (year) => {
-    var res = await fetch(`http://${config.server_host}:${config.server_port}/home?year=${year}`, {
+const getBoroughSummary = async (year, usefor) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/home?year=${year}&usefor=${usefor}`, {
         method: 'GET',
     })
     return res.json()

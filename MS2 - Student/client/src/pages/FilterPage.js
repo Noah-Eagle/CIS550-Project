@@ -24,7 +24,7 @@ const rentColumns = [
       title: 'Neighborhood',
       dataIndex: 'Neighborhood',
       key: 'Neighborhood',
-      sorter: (a, b) => a.Neighborhood.localeCompare(b.Neighborhood),
+      sorter: (a, b) => a.Neighborhood.localeCompare(b.Neighborhood)
     },
     {
         title: 'Average Rent',
