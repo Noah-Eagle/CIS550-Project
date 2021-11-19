@@ -15,34 +15,71 @@ connection.connect();
 async function borough_summary(req, res) {
 
     const year = req.query.year ? req.query.year : 2020
+    const usefor = req.query.usefor
     
-    connection.query(`
-    WITH Borough_Rents AS (
-    SELECT NeighborhoodBorough.Borough, AVG(Rent.AvgRent) AS Average_Rent
-    FROM NeighborhoodBorough JOIN Rent ON NeighborhoodBorough.Neighborhood = Rent.Neighborhood
-    WHERE Rent.Year = ${year}
-    GROUP BY NeighborhoodBorough.Borough
-    ),
-    Borough_Crimes AS (
-    SELECT BoroughCrimesAllYears.Borough, BoroughCrimesAllYears.Crime_Count
-    FROM BoroughCrimesAllYears
-    WHERE BoroughCrimesAllYears.Year = ${year}
-    )
-    SELECT Borough_Crimes.Borough, Borough_Rents.Average_Rent, Borough_Crimes.Crime_Count
-    FROM Borough_Crimes LEFT OUTER JOIN Borough_Rents ON Borough_Crimes.Borough = Borough_Rents.Borough
-    ORDER BY Borough_Crimes.Borough;
-    `, function (error, results, fields) {
-    
-        if (error) {
-            console.log(error)
-            res.json({ error: error })
-        }
+    if(usefor === 'graph') {
 
-        else if (results) {
-            res.json({ results: results })
-        }
+        connection.query(`
+        WITH Borough_Rents AS (
+        SELECT NeighborhoodBorough.Borough, AVG(Rent.AvgRent) AS Average_Rent
+        FROM NeighborhoodBorough JOIN Rent ON NeighborhoodBorough.Neighborhood = Rent.Neighborhood
+        WHERE Rent.Year = ${year}
+        GROUP BY NeighborhoodBorough.Borough
+        ),
+        Borough_Crimes AS (
+        SELECT BoroughCrimesAllYears.Borough, BoroughCrimesAllYears.Crime_Count
+        FROM BoroughCrimesAllYears
+        WHERE BoroughCrimesAllYears.Year = ${year}
+        )
+        SELECT Borough_Crimes.Borough, Borough_Rents.Average_Rent, Borough_Crimes.Crime_Count
+        FROM Borough_Crimes LEFT OUTER JOIN Borough_Rents ON Borough_Crimes.Borough = Borough_Rents.Borough
+        ORDER BY Borough_Crimes.Borough;
+        `, function (error, results, fields) {
+        
+            if (error) {
+                console.log(error)
+                res.json({ error: error })
+            }
 
-    });
+            else if (results) {
+                res.json({ results: results })
+            }
+
+        });
+
+    }
+
+    else if (usefor === 'table') {
+
+        connection.query(`
+        WITH Borough_Rents AS (
+        SELECT NeighborhoodBorough.Borough, AVG(Rent.AvgRent) AS Average_Rent
+        FROM NeighborhoodBorough JOIN Rent ON NeighborhoodBorough.Neighborhood = Rent.Neighborhood
+        WHERE Rent.Year = ${year}
+        GROUP BY NeighborhoodBorough.Borough
+        ),
+        Borough_Crimes AS (
+        SELECT BoroughCrimesAllYears.Borough, BoroughCrimesAllYears.Crime_Count
+        FROM BoroughCrimesAllYears
+        WHERE BoroughCrimesAllYears.Year = ${year}
+        )
+        SELECT Borough_Crimes.Borough, CONCAT('$', FORMAT(IFNULL(Borough_Rents.Average_Rent, 0), 2)) AS Average_Rent, FORMAT(Borough_Crimes.Crime_Count, 0) AS Crime_Count
+        FROM Borough_Crimes LEFT OUTER JOIN Borough_Rents ON Borough_Crimes.Borough = Borough_Rents.Borough
+        ORDER BY Borough_Crimes.Borough;
+        `, function (error, results, fields) {
+        
+            if (error) {
+                console.log(error)
+                res.json({ error: error })
+            }
+
+            else if (results) {
+                res.json({ results: results })
+            }
+
+        });
+
+    }
 
 }
 
