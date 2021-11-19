@@ -27,30 +27,33 @@ const rentColumns = [
       sorter: (a, b) => a.Neighborhood.localeCompare(b.Neighborhood),
     },
     {
-        title: 'Cheapest Rent',
-        dataIndex: 'Cheapest_Rent',
-        key: 'Cheapest_Rent',
-        sorter: (a, b) => a.Cheapest_Rent - b.Cheapest_Rent
+        title: 'Average Rent',
+        dataIndex: 'AverageRent',
+        key: 'AverageRent',
+        sorter: (a, b) => parseFloat(a.AverageRent.replace(/,/g, '').replace('$', '')) - parseFloat(b.AverageRent.replace(/,/g, '').replace('$', ''))
       },
     {
-      title: 'Average Rent',
-      dataIndex: 'Average_Rent',
-      key: 'Average_Rent',
-      sorter: (a, b) => a.Average_Rent - b.Average_Rent
-    },
+        title: 'Lowest Rent',
+        dataIndex: 'LowestRent',
+        key: 'LowestRent',
+        sorter: (a, b) => parseFloat(a.LowestRent.replace(/,/g, '').replace('$', '')) - parseFloat(b.LowestRent.replace(/,/g, '').replace('$', ''))
+      },
     {
-        title: 'Costliest Rent',
-        dataIndex: 'Costliest_Rent',
-        key: 'Costliest_Rent',
-        sorter: (a, b) => a.Costliest_Rent - b.Costliest_Rent
+        title: 'Highest Rent',
+        dataIndex: 'HighestRent',
+        key: 'HighestRent',
+        sorter: (a, b) => parseFloat(a.HighestRent.replace(/,/g, '').replace('$', '')) - parseFloat(b.HighestRent.replace(/,/g, '').replace('$', ''))
       },
     {
       title: 'Rent Range',
-      dataIndex: 'Rent_Range',
-      key: 'Rent_Range',
-      sorter: (a, b) => a.Rent_Range - b.Rent_Range
+      dataIndex: 'RentRange',
+      key: 'RentRange',
+      sorter: (a, b) => parseFloat(a.RentRange.replace(/,/g, '').replace('$', '')) - parseFloat(b.RentRange.replace(/,/g, '').replace('$', ''))
     }
 ];
+
+
+
 
 const crimeColumns = [
     {
@@ -79,25 +82,28 @@ const crimeColumns = [
       }
 ];
 
+
+
+
 class FilterPage extends React.Component {
 
     constructor(props) {
       super(props)
   
       this.state = {
+        minrent: '',
+        maxrent: '',
         rentResults: [],
-        low_rent_bound: 0,
-        high_rent_bound: Number.MAX_SAFE_INTEGER,
-        crimeResults: [],
         felony_limit: Number.MAX_SAFE_INTEGER,
         gender_limit: Number.MAX_SAFE_INTEGER,
         age_limit: Number.MAX_SAFE_INTEGER,
         gender: 'F',
-        age_range: '<18'
+        age_range: '<18',
+        crimeResults: []
       }
   
-      this.handleLowRentBoundChange = this.handleLowRentBoundChange.bind(this)
-      this.handleHighRentBoundChange = this.handleHighRentBoundChange.bind(this)
+      this.handleMinRentChange = this.handleMinRentChange.bind(this)
+      this.handleMaxRentChange = this.handleMaxRentChange.bind(this)
       this.updateRentSearchResults = this.updateRentSearchResults.bind(this)
 
       this.handleFelonyLimitChange = this.handleFelonyLimitChange.bind(this)
@@ -109,6 +115,45 @@ class FilterPage extends React.Component {
 
 
     }
+
+
+
+    componentDidMount() {
+        console.log(this.state.minrent)
+        console.log(typeof this.state.minrent)
+        getFilteredRents(0, Number.MAX_SAFE_INTEGER).then(res => {
+            this.setState({ rentResults: res.results })
+        })
+
+        // getFilteredCrime(50, 50, 50, 'F', '<18').then(res => {
+        //     this.setState({ crimeResults: res.results })
+        // })
+    }
+
+
+
+    handleMinRentChange(event) {
+
+        this.setState({ minrent: event.target.value})
+    }
+
+    handleMaxRentChange(event) {
+
+        this.setState({ maxrent: event.target.value})
+    }
+  
+    updateRentSearchResults() {
+        console.log(this.state.minrent)
+        console.log(typeof this.state.minrent)
+        getFilteredRents(this.state.minrent, this.state.maxrent).then(res => {
+            this.setState({ rentResults: res.results })
+        })
+    }
+  
+    
+
+
+
 
     handleFelonyLimitChange(event) {
 
@@ -142,60 +187,40 @@ class FilterPage extends React.Component {
         })
     }
   
-    handleLowRentBoundChange(event) {
-
-        this.setState({ low_rent_bound: event.target.value})
-    }
-
-    handleHighRentBoundChange(event) {
-
-        this.setState({ high_rent_bound: event.target.value})
-    }
-  
-    updateRentSearchResults() {
-
-        getFilteredRents(this.state.low_rent_bound, this.state.high_rent_bound).then(res => {
-            this.setState({ rentResults: res.results })
-        })
-    }
-  
-    componentDidMount() {
-
-        getFilteredRents(0, 10000).then(res => {
-            this.setState({ rentResults: res.results })
-        })
-
-        getFilteredCrime(50, 50, 50, 'F', '<18').then(res => {
-            this.setState({ crimeResults: res.results })
-        })
-    }
   
     render() {
   
       return (
         <div>
         <MenuBar />
+
+
+
+
         <div style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }}>
                 <Form style={{ width: '80vw', margin: '0 auto', marginTop: '5vh' }}>
                     <Row>
                         <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
-                            <label>Low Rent Bound</label>
-                            <FormInput placeholder="0" value={this.state.low_rent_bound} onChange={this.handleLowRentBoundChange} />
+                            <FormInput placeholder="Minimum Rent" onChange={this.handleMinRentChange} />
                         </FormGroup></Col>
                         <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
-                            <label>High Rent Bound</label>
-                            <FormInput placeholder="" value={this.state.high_rent_bound} onChange={this.handleHighRentBoundChange} />
+                            <FormInput placeholder="Maximum Rent" onChange={this.handleMaxRentChange} />
                         </FormGroup></Col>
                         <Col flex={2}><FormGroup style={{ width: '10vw' }}>
-                            <Button style={{ marginTop: '4vh' }} onClick={this.updateRentSearchResults}>Search</Button>
+                            <Button style={{ marginTop: '0vh' }} onClick={this.updateRentSearchResults}>Search</Button>
                         </FormGroup></Col>
                     </Row>
                 </Form>
 
             <Divider />
-            <Table dataSource={this.state.rentResults} columns={rentColumns} pagination={false}></Table>
+
+            <Table dataSource={this.state.rentResults} columns={rentColumns} pagination={{ defaultPageSize: 5, showQuickJumper:true }}></Table>
 
             <Divider />
+
+
+
+
 
             <Form style={{ width: '80vw', margin: '0 auto', marginTop: '5vh' }}>
                     <Row>

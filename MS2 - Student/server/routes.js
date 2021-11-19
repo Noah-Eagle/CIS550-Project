@@ -77,34 +77,18 @@ async function borough_trends(req, res) {
 
 async function rent_filter(req, res) {
 
-    if (req.query.low_rent_bound && !isNaN(req.query.low_rent_bound)) {
-
-        var lowest_rent = req.query.low_rent_bound
-
-    } else {
-
-        var lowest_rent = 0
-    }
-
-    if (req.query.high_rent_bound && !isNaN(req.query.high_rent_bound)) {
-
-        var highest_rent = req.query.high_rent_bound
-
-    } else {
-
-        var highest_rent = Number.MAX_SAFE_INTEGER
-    }
+    const minrent = req.query.minrent ? req.query.minrent : 0
+    const maxrent = req.query.maxrent ? req.query.maxrent : Number.MAX_SAFE_INTEGER
 
     connection.query(`
-    SELECT Rent.Neighborhood, MIN(Rent.MinRent) AS Cheapest_Rent, AVG(Rent.AvgRent) AS Average_Rent, MAX(Rent.MaxRent) AS Costliest_Rent, MAX(Rent.MaxRent) - MIN(Rent.MinRent) AS Rent_Range
+    SELECT Rent.Neighborhood, CONCAT('$', FORMAT(AVG(Rent.AvgRent), 2)) AS AverageRent, CONCAT('$', FORMAT(MIN(Rent.MinRent), 2)) AS LowestRent, CONCAT('$', FORMAT(MAX(Rent.MaxRent), 2)) AS HighestRent, CONCAT('$', FORMAT((MAX(Rent.MaxRent) - MIN(Rent.MinRent)), 2)) AS RentRange
     FROM Rent
     WHERE Rent.Year = 2020
     GROUP BY Rent.Neighborhood
-    HAVING Average_Rent >= ` + lowest_rent + ` AND Average_Rent <= `+ highest_rent + `
+    HAVING AVG(Rent.AvgRent) >= ${minrent} AND AVG(Rent.AvgRent) <= ${maxrent}
     `, function (error, results, fields) {
     
         if (error) {
-            console.log(error)
             res.json({ error: error })
         }
 

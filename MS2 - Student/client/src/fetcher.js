@@ -14,8 +14,8 @@ const getBoroughTrends = async (borough) => {
     return res.json()
 }
 
-const getFilteredRents = async (low_rent_bound, high_rent_bound) => {
-    var res = await fetch(`http://${config.server_host}:${config.server_port}/filter/rents?low_rent_bound=${low_rent_bound}&high_rent_bound=${high_rent_bound}`, {
+const getFilteredRents = async (minrent, maxrent) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/filter/rents?minrent=${minrent}&maxrent=${maxrent}`, {
         method: 'GET',
     })
     return res.json()
