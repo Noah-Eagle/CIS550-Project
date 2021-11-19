@@ -81,7 +81,7 @@ async function rent_filter(req, res) {
     const maxrent = req.query.maxrent ? req.query.maxrent : Number.MAX_SAFE_INTEGER
 
     connection.query(`
-    SELECT Rent.Neighborhood, CONCAT('$', FORMAT(AVG(Rent.AvgRent), 2)) AS AverageRent, MIN(Rent.MinRent) AS LowestRent, MAX(Rent.MaxRent) AS HighestRent, MAX(Rent.MaxRent) - MIN(Rent.MinRent) AS RentRange
+    SELECT Rent.Neighborhood, CONCAT('$', FORMAT(AVG(Rent.AvgRent), 2)) AS AverageRent, CONCAT('$', FORMAT(MIN(Rent.MinRent), 2)) AS LowestRent, CONCAT('$', FORMAT(MAX(Rent.MaxRent), 2)) AS HighestRent, CONCAT('$', FORMAT((MAX(Rent.MaxRent) - MIN(Rent.MinRent)), 2)) AS RentRange
     FROM Rent
     WHERE Rent.Year = 2020
     GROUP BY Rent.Neighborhood

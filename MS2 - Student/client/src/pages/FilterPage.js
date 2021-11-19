@@ -36,19 +36,19 @@ const rentColumns = [
         title: 'Lowest Rent',
         dataIndex: 'LowestRent',
         key: 'LowestRent',
-        sorter: (a, b) => a.LowestRent - b.LowestRent
+        sorter: (a, b) => parseFloat(a.LowestRent.replace(/,/g, '').replace('$', '')) - parseFloat(b.LowestRent.replace(/,/g, '').replace('$', ''))
       },
     {
         title: 'Highest Rent',
         dataIndex: 'HighestRent',
         key: 'HighestRent',
-        sorter: (a, b) => a.HighestRent - b.HighestRent
+        sorter: (a, b) => parseFloat(a.HighestRent.replace(/,/g, '').replace('$', '')) - parseFloat(b.HighestRent.replace(/,/g, '').replace('$', ''))
       },
     {
       title: 'Rent Range',
       dataIndex: 'RentRange',
       key: 'RentRange',
-      sorter: (a, b) => a.RentRange - b.RentRange
+      sorter: (a, b) => parseFloat(a.RentRange.replace(/,/g, '').replace('$', '')) - parseFloat(b.RentRange.replace(/,/g, '').replace('$', ''))
     }
 ];
 
@@ -91,8 +91,8 @@ class FilterPage extends React.Component {
       super(props)
   
       this.state = {
-        minrent: null,
-        maxrent: null,
+        minrent: '',
+        maxrent: '',
         rentResults: [],
         felony_limit: Number.MAX_SAFE_INTEGER,
         gender_limit: Number.MAX_SAFE_INTEGER,
@@ -119,7 +119,8 @@ class FilterPage extends React.Component {
 
 
     componentDidMount() {
-
+        console.log(this.state.minrent)
+        console.log(typeof this.state.minrent)
         getFilteredRents(0, Number.MAX_SAFE_INTEGER).then(res => {
             this.setState({ rentResults: res.results })
         })
@@ -142,7 +143,8 @@ class FilterPage extends React.Component {
     }
   
     updateRentSearchResults() {
-
+        console.log(this.state.minrent)
+        console.log(typeof this.state.minrent)
         getFilteredRents(this.state.minrent, this.state.maxrent).then(res => {
             this.setState({ rentResults: res.results })
         })
