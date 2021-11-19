@@ -143,9 +143,17 @@ class FilterPage extends React.Component {
             this.setState({ rentResults: res.results })
         })
 
-        // getFilteredCrime(50, 50, 50, 'F', '<18').then(res => {
-        //     this.setState({ crimeResults: res.results })
-        // })
+        getFilteredCrimeOffense(Number.MAX_SAFE_INTEGER, 'Felony').then(res => {
+            this.setState({crimeOffenseResults: res.results})
+        })
+
+        getFilteredCrimeGender(Number.MAX_SAFE_INTEGER, 'F').then(res => {
+            this.setState({crimeGenderResults: res.results})
+        })
+
+        getFilteredCrimeAge(Number.MAX_SAFE_INTEGER, '<18').then(res => {
+            this.setState({crimeAgeResults: res.results})
+        })
     }
 
 
@@ -285,7 +293,7 @@ class FilterPage extends React.Component {
                 </Form>
 
             <Divider />
-            <Table dataSource={this.state.crimeOffenseResults} columns={crimeOffenseColumns} pagination={false}></Table>
+            <Table dataSource={this.state.crimeOffenseResults} columns={crimeOffenseColumns} pagination={{ defaultPageSize: 5, showQuickJumper:true }}></Table>
         
             <Divider />
 
@@ -309,7 +317,7 @@ class FilterPage extends React.Component {
                 </Form>
 
             <Divider />
-            <Table dataSource={this.state.crimeGenderResults} columns={crimeGenderColumns} pagination={false}></Table>
+            <Table dataSource={this.state.crimeGenderResults} columns={crimeGenderColumns} pagination={{ defaultPageSize: 5, showQuickJumper:true }}></Table>
 
             <Divider />
 
@@ -336,7 +344,7 @@ class FilterPage extends React.Component {
                 </Form>
 
             <Divider />
-            <Table dataSource={this.state.crimeAgeResults} columns={crimeAgeColumns} pagination={false}></Table>
+            <Table dataSource={this.state.crimeAgeResults} columns={crimeAgeColumns} pagination={{ defaultPageSize: 5, showQuickJumper:true }}></Table>
 
         </div>
         </div>
