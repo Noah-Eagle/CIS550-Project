@@ -21,8 +21,22 @@ const getFilteredRents = async (minrent, maxrent) => {
     return res.json()
 }
 
-const getFilteredCrime = async (felony_limit, gender_limit, age_limit, gender, age_range) => {
-    var res = await fetch(`http://${config.server_host}:${config.server_port}/filter/crimes?felony_limit=${felony_limit}&gender_limit=${gender_limit}&age_limit=${age_limit}&gender=${gender}&age_range=${age_range}`, {
+const getFilteredCrimeOffense = async (offense_limit, offense) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/filter/crimes/offenselevel?offense_limit=${offense_limit}&offense=${offense}`, {
+        method: 'GET',
+    })
+    return res.json()
+}
+
+const getFilteredCrimeGender = async (gender_limit, gender) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/filter/crimes/gender?gender_limit=${gender_limit}&gender=${gender}`, {
+        method: 'GET',
+    })
+    return res.json()
+}
+
+const getFilteredCrimeAge = async (age_limit, age_range) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/filter/crimes/age?age_limit=${age_limit}&age_range=${age_range}`, {
         method: 'GET',
     })
     return res.json()
@@ -77,7 +91,9 @@ export {
     getBoroughSummary,
     getBoroughTrends,
     getFilteredRents,
-    getFilteredCrime
+    getFilteredCrimeOffense,
+    getFilteredCrimeGender,
+    getFilteredCrimeAge
     // getAllMatches,
     // getAllPlayers,
     // getMatch,

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import MenuBar from '../components/MenuBar';
-import { getFilteredRents, getFilteredCrime } from '../fetcher'
+import { getFilteredRents, getFilteredCrimeOffense, getFilteredCrimeGender, getFilteredCrimeAge } from '../fetcher'
 
 import { Form, FormInput, FormGroup, Button } from "shards-react";
 
@@ -53,9 +53,7 @@ const rentColumns = [
 ];
 
 
-
-
-const crimeColumns = [
+const crimeOffenseColumns = [
     {
       title: 'Neighborhood',
       dataIndex: 'Neighborhood',
@@ -63,27 +61,42 @@ const crimeColumns = [
       sorter: (a, b) => a.Neighborhood.localeCompare(b.Neighborhood),
     },
     {
-        title: 'Felony Count',
-        dataIndex: 'Felony_Count',
-        key: 'Felony_Count',
-        sorter: (a, b) => a.Felony_Count - b.Felony_Count
+        title: 'Offense Count',
+        dataIndex: 'Offense_Count',
+        key: 'Offense_Count',
+        sorter: (a, b) => a.Offense_Count - b.Offense_Count
       },
+];
+
+const crimeGenderColumns = [
     {
-      title: 'Gender Victimizations',
-      dataIndex: 'Gender_Victimizations',
-      key: 'Gender_Victimizations',
-      sorter: (a, b) => a.Gender_Victimizations - b.Gender_Victimizations
+      title: 'Neighborhood',
+      dataIndex: 'Neighborhood',
+      key: 'Neighborhood',
+      sorter: (a, b) => a.Neighborhood.localeCompare(b.Neighborhood),
+    },
+    {
+        title: 'Gender Victimizations',
+        dataIndex: 'Gender_Victimizations',
+        key: 'Gender_Victimizations',
+        sorter: (a, b) => a.Gender_Victimizations - b.Gender_Victimizations
+      },
+];
+
+const crimeAgeColumns = [
+    {
+      title: 'Neighborhood',
+      dataIndex: 'Neighborhood',
+      key: 'Neighborhood',
+      sorter: (a, b) => a.Neighborhood.localeCompare(b.Neighborhood),
     },
     {
         title: 'Age Group Victimizations',
         dataIndex: 'Age_Group_Victimizations',
         key: 'Age_Group_Victimizations',
         sorter: (a, b) => a.Age_Group_Victimizations - b.Age_Group_Victimizations
-      }
+      },
 ];
-
-
-
 
 class FilterPage extends React.Component {
 
@@ -94,25 +107,30 @@ class FilterPage extends React.Component {
         minrent: '',
         maxrent: '',
         rentResults: [],
-        felony_limit: Number.MAX_SAFE_INTEGER,
+        offense_limit: Number.MAX_SAFE_INTEGER,
         gender_limit: Number.MAX_SAFE_INTEGER,
         age_limit: Number.MAX_SAFE_INTEGER,
+        offense: 'Felony',
         gender: 'F',
         age_range: '<18',
-        crimeResults: []
+        crimeOffenseResults: [],
+        crimeGenderResults: [],
+        crimeAgeResults: []
       }
   
       this.handleMinRentChange = this.handleMinRentChange.bind(this)
       this.handleMaxRentChange = this.handleMaxRentChange.bind(this)
       this.updateRentSearchResults = this.updateRentSearchResults.bind(this)
 
-      this.handleFelonyLimitChange = this.handleFelonyLimitChange.bind(this)
+      this.handleOffenseLimitChange = this.handleOffenseLimitChange.bind(this)
       this.handleGenderLimitChange = this.handleGenderLimitChange.bind(this)
       this.handleAgeLimitChange = this.handleAgeLimitChange.bind(this)
+      this.handleOffenseChange = this.handleOffenseChange.bind(this)
       this.handleGenderChange = this.handleGenderChange.bind(this)
       this.handleAgeRangeChange = this.handleAgeRangeChange.bind(this)
-      this.updateCrimeSearchResults = this.updateCrimeSearchResults.bind(this)
-
+      this.updateOffenseCrimeSearchResults = this.updateOffenseCrimeSearchResults.bind(this)
+      this.updateGenderCrimeSearchResults = this.updateGenderCrimeSearchResults.bind(this)
+      this.updateAgeCrimeSearchResults = this.updateAgeCrimeSearchResults.bind(this)
 
     }
 
@@ -155,9 +173,14 @@ class FilterPage extends React.Component {
 
 
 
-    handleFelonyLimitChange(event) {
+    handleOffenseLimitChange(event) {
 
-        this.setState({ felony_limit: event.target.value})
+        this.setState({ offense_limit: event.target.value})
+    }
+
+    handleOffenseChange(value) {
+
+        this.setState({ offense: value})
     }
 
     handleGenderLimitChange(event) {
@@ -180,10 +203,29 @@ class FilterPage extends React.Component {
         this.setState({ age_range: value})
     }
 
-    updateCrimeSearchResults() {
+    updateOffenseCrimeSearchResults() {
 
-        getFilteredCrime(this.state.felony_limit, this.state.gender_limit, this.state.age_limit, this.state.gender, this.state.age_range).then(res => {
-            this.setState({ crimeResults: res.results })
+        getFilteredCrimeOffense(this.state.offense_limit, this.state.offense).then(res => {
+            this.setState({ crimeOffenseResults: res.results })
+        })
+    }
+
+    updateGenderCrimeSearchResults() {
+
+        getFilteredCrimeGender(this.state.gender_limit, this.state.gender).then(res => {
+            this.setState({ crimeGenderResults: res.results })
+        })
+    }
+
+    updateAgeCrimeSearchResults() {
+
+        console.log(this.state.age_limit)
+        console.log(this.state.age_range)
+        console.log(typeof(this.state.age_range))
+
+        getFilteredCrimeAge(this.state.age_limit, this.state.age_range).then(res => {
+            console.log(res.results)
+            this.setState({ crimeAgeResults: res.results })
         })
     }
   
@@ -225,18 +267,29 @@ class FilterPage extends React.Component {
             <Form style={{ width: '80vw', margin: '0 auto', marginTop: '5vh' }}>
                     <Row>
                         <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
-                            <label>Lowest X for Felonies</label>
-                            <FormInput placeholder="50" value={this.state.felony_limit} onChange={this.handleFelonyLimitChange} />
+                            <label>Offense</label>
+                            <Select defaultValue="Felony" style={{ width: '20vw' }} onChange={this.handleOffenseChange}>
+                                <Option value="Felony">Felony</Option>
+                                <Option value="Misdemeanor">Misdemeanor</Option>
+                                <Option value="Violation">Violation</Option>
+                            </Select>
                         </FormGroup></Col>
                         <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
-                            <label>Lowest X for Gender Victimizations</label>
-                            <FormInput placeholder="50" value={this.state.gender_limit} onChange={this.handleGenderLimitChange} />
+                            <label>Lowest X for Selected Offense</label>
+                            <FormInput placeholder="50" value={this.state.offense_limit} onChange={this.handleOffenseLimitChange} />
                         </FormGroup></Col>
-                        <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
-                            <label>Lowest X for Age Group Victimizations</label>
-                            <FormInput placeholder="50" value={this.state.age_limit} onChange={this.handleAgeLimitChange} />
+                        <Col flex={2}><FormGroup style={{ width: '10vw' }}>
+                            <Button style={{ marginTop: '0vh' }} onClick={this.updateOffenseCrimeSearchResults}>Search</Button>
                         </FormGroup></Col>
                     </Row>
+                </Form>
+
+            <Divider />
+            <Table dataSource={this.state.crimeOffenseResults} columns={crimeOffenseColumns} pagination={false}></Table>
+        
+            <Divider />
+
+            <Form style={{ width: '80vw', margin: '0 auto', marginTop: '5vh' }}>
                     <Row>
                         <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
                             <label>Gender</label>
@@ -245,6 +298,23 @@ class FilterPage extends React.Component {
                                 <Option value="M">Male</Option>
                             </Select>
                         </FormGroup></Col>
+                        <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
+                            <label>Safest X for Selected Gender</label>
+                            <FormInput placeholder="50" value={this.state.gender_limit} onChange={this.handleGenderLimitChange} />
+                        </FormGroup></Col>
+                        <Col flex={2}><FormGroup style={{ width: '10vw' }}>
+                            <Button style={{ marginTop: '0vh' }} onClick={this.updateGenderCrimeSearchResults}>Search</Button>
+                        </FormGroup></Col>
+                    </Row>
+                </Form>
+
+            <Divider />
+            <Table dataSource={this.state.crimeGenderResults} columns={crimeGenderColumns} pagination={false}></Table>
+
+            <Divider />
+
+            <Form style={{ width: '80vw', margin: '0 auto', marginTop: '5vh' }}>
+                    <Row>
                         <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
                             <label>Age Group</label>
                             <Select defaultValue="<18" style={{ width: '20vw' }} onChange={this.handleAgeRangeChange}>
@@ -255,14 +325,18 @@ class FilterPage extends React.Component {
                                 <Option value="65+">65+</Option>
                             </Select>
                         </FormGroup></Col>
+                        <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
+                            <label>Safest X for Selected Age Group</label>
+                            <FormInput placeholder="50" value={this.state.age_limit} onChange={this.handleAgeLimitChange} />
+                        </FormGroup></Col>
                         <Col flex={2}><FormGroup style={{ width: '10vw' }}>
-                            <Button style={{ marginTop: '4vh' }} onClick={this.updateCrimeSearchResults}>Search</Button>
+                            <Button style={{ marginTop: '0vh' }} onClick={this.updateAgeCrimeSearchResults}>Search</Button>
                         </FormGroup></Col>
                     </Row>
                 </Form>
 
             <Divider />
-            <Table dataSource={this.state.crimeResults} columns={crimeColumns} pagination={false}></Table>
+            <Table dataSource={this.state.crimeAgeResults} columns={crimeAgeColumns} pagination={false}></Table>
 
         </div>
         </div>
@@ -272,6 +346,3 @@ class FilterPage extends React.Component {
   }
   
   export default FilterPage
-  
-  
-

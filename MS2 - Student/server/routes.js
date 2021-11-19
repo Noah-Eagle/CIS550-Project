@@ -137,16 +137,49 @@ async function rent_filter(req, res) {
 
 }
 
-async function crime_filter(req, res) {
+async function crime_filter_offenselevel(req, res) {
 
-    if (req.query.felony_limit && !isNaN(req.query.felony_limit)) {
+    if (req.query.offense_limit && !isNaN(req.query.offense_limit)) {
 
-        var felony_limit = req.query.felony_limit
+        var offense_limit = req.query.offense_limit
 
     } else {
 
-        var felony_limit = Number.MAX_SAFE_INTEGER
+        var offense_limit = Number.MAX_SAFE_INTEGER
     }
+
+    if (req.query.offense) {
+
+        var offense = req.query.offense
+
+    } else {
+
+        var offense = 'Felony'
+    }
+
+    connection.query(`
+    SELECT ZipCodeNeighborhood.Neighborhood, COUNT(*) AS Offense_Count
+    FROM ZipCodeNeighborhood JOIN 2020Crimes ON ZipCodeNeighborhood.ZipCode = 2020Crimes.ZipCode
+    WHERE 2020Crimes.OffenseLevel = '` + offense + `'
+    GROUP BY ZipCodeNeighborhood.Neighborhood
+    ORDER BY Offense_Count
+    LIMIT ` + offense_limit + `;
+    `, function (error, results, fields) {
+    
+        if (error) {
+            console.log(error)
+            res.json({ error: error })
+        }
+
+        else if (results) {
+            res.json({ results: results })
+        }
+
+    });
+
+}
+
+async function crime_filter_gender(req, res) {
 
     if (req.query.gender_limit && !isNaN(req.query.gender_limit)) {
 
@@ -157,15 +190,6 @@ async function crime_filter(req, res) {
         var gender_limit = Number.MAX_SAFE_INTEGER
     }
 
-    if (req.query.age_limit && !isNaN(req.query.age_limit)) {
-
-        var age_limit = req.query.age_limit
-
-    } else {
-
-        var age_limit = Number.MAX_SAFE_INTEGER
-    }
-
     if (req.query.gender) {
 
         var gender = req.query.gender
@@ -173,6 +197,39 @@ async function crime_filter(req, res) {
     } else {
 
         var gender = 'F'
+    }
+
+    connection.query(`
+    SELECT ZipCodeNeighborhood.Neighborhood, COUNT(*) AS Gender_Victimizations
+    FROM ZipCodeNeighborhood JOIN 2020Crimes ON ZipCodeNeighborhood.ZipCode = 2020Crimes.ZipCode
+    WHERE 2020Crimes.VictimGender = '` + gender + `'
+    GROUP BY ZipCodeNeighborhood.Neighborhood
+    ORDER BY Gender_Victimizations
+    LIMIT ` + gender_limit + `;
+    `, function (error, results, fields) {
+    
+        if (error) {
+            console.log(error)
+            res.json({ error: error })
+        }
+
+        else if (results) {
+            res.json({ results: results })
+        }
+
+    });
+
+}
+
+async function crime_filter_age(req, res) {
+
+    if (req.query.age_limit && !isNaN(req.query.age_limit)) {
+
+        var age_limit = req.query.age_limit
+
+    } else {
+
+        var age_limit = Number.MAX_SAFE_INTEGER
     }
 
     if (req.query.age_range) {
@@ -185,27 +242,12 @@ async function crime_filter(req, res) {
     }
 
     connection.query(`
-    WITH Least_Felonies AS (SELECT ZipCodeNeighborhood.Neighborhood, COUNT(*) AS Felony_Count
-                       FROM ZipCodeNeighborhood JOIN Crime ON ZipCodeNeighborhood.ZipCode = Crime.ZipCode
-                       WHERE Crime.Year = 2020 AND Crime.OffenseLevel = 'Felony'
-                       GROUP BY ZipCodeNeighborhood.Neighborhood
-                       ORDER BY Felony_Count
-                       LIMIT ` + felony_limit + `),
-    Least_Gender_Victimizations AS (SELECT ZipCodeNeighborhood.Neighborhood, COUNT(*) AS Gender_Victimizations
-                                    FROM ZipCodeNeighborhood JOIN Crime ON ZipCodeNeighborhood.ZipCode = Crime.ZipCode
-                                    WHERE Crime.Year = 2020 AND Crime.VictimGender = '` + gender + `'
-                                    GROUP BY ZipCodeNeighborhood.Neighborhood
-                                    ORDER BY Gender_Victimizations
-                                    LIMIT ` + gender_limit + `),
-    Least_Age_Victimizations AS (SELECT ZipCodeNeighborhood.Neighborhood, COUNT(*) AS Age_Group_Victimizations
-                                 FROM ZipCodeNeighborhood JOIN Crime ON ZipCodeNeighborhood.ZipCode = Crime.ZipCode
-                                 WHERE Crime.Year = 2020 AND Crime.VictimAgeGroup = '` + age_range + `'
-                                 GROUP BY ZipCodeNeighborhood.Neighborhood
-                                 ORDER BY Age_Group_Victimizations
-                                 LIMIT ` + age_limit + `)
-SELECT Least_Felonies.Neighborhood, Least_Felonies.Felony_Count, Least_Gender_Victimizations.Gender_Victimizations, Least_Age_Victimizations.Age_Group_Victimizations
-FROM Least_Felonies JOIN Least_Gender_Victimizations ON Least_Felonies.Neighborhood = Least_Gender_Victimizations.Neighborhood
-                   JOIN Least_Age_Victimizations ON Least_Felonies.Neighborhood = Least_Age_Victimizations.Neighborhood
+    SELECT ZipCodeNeighborhood.Neighborhood, COUNT(*) AS Age_Group_Victimizations
+    FROM ZipCodeNeighborhood JOIN 2020Crimes ON ZipCodeNeighborhood.ZipCode = 2020Crimes.ZipCode
+    WHERE 2020Crimes.VictimAgeGroup = '` + age_range + `'
+    GROUP BY ZipCodeNeighborhood.Neighborhood
+    ORDER BY Age_Group_Victimizations
+    LIMIT ` + age_limit + `;
     `, function (error, results, fields) {
     
         if (error) {
@@ -593,7 +635,9 @@ module.exports = {
     borough_summary,
     borough_trends,
     rent_filter,
-    crime_filter
+    crime_filter_offenselevel,
+    crime_filter_gender,
+    crime_filter_age
     // jersey,
     // all_matches,
     // all_players,
