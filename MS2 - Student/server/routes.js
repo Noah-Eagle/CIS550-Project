@@ -166,31 +166,17 @@ async function crime_filter_offenselevel(req, res) {
 
 async function crime_filter_gender(req, res) {
 
-    if (req.query.gender_limit && !isNaN(req.query.gender_limit)) {
-
-        var gender_limit = req.query.gender_limit
-
-    } else {
-
-        var gender_limit = Number.MAX_SAFE_INTEGER
-    }
-
-    if (req.query.gender) {
-
-        var gender = req.query.gender
-
-    } else {
-
-        var gender = 'F'
-    }
+    const gender = req.query.gender ? req.query.gender : 'M'
+    const numresults = req.query.numresults ? req.query.numresults : 1
+    const ordering = req.query.ordering ? req.query.ordering : 'ASC'
 
     connection.query(`
     SELECT ZipCodeNeighborhood.Neighborhood, COUNT(*) AS Gender_Victimizations
     FROM ZipCodeNeighborhood JOIN 2020Crimes ON ZipCodeNeighborhood.ZipCode = 2020Crimes.ZipCode
-    WHERE 2020Crimes.VictimGender = '` + gender + `'
+    WHERE 2020Crimes.VictimGender = '${gender}'
     GROUP BY ZipCodeNeighborhood.Neighborhood
-    ORDER BY Gender_Victimizations
-    LIMIT ` + gender_limit + `;
+    ORDER BY COUNT(*) ${ordering}
+    LIMIT ${numresults}
     `, function (error, results, fields) {
     
         if (error) {
