@@ -180,7 +180,6 @@ async function crime_filter_gender(req, res) {
     `, function (error, results, fields) {
     
         if (error) {
-            console.log(error)
             res.json({ error: error })
         }
 
@@ -194,35 +193,20 @@ async function crime_filter_gender(req, res) {
 
 async function crime_filter_age(req, res) {
 
-    if (req.query.age_limit && !isNaN(req.query.age_limit)) {
-
-        var age_limit = req.query.age_limit
-
-    } else {
-
-        var age_limit = Number.MAX_SAFE_INTEGER
-    }
-
-    if (req.query.age_range) {
-
-        var age_range = req.query.age_range
-
-    } else {
-
-        var age_range = '<18'
-    }
+    const agerange = req.query.agerange ? req.query.agerange : '<18'
+    const numresults = req.query.numresults ? req.query.numresults : 1
+    const ordering = req.query.ordering ? req.query.ordering : 'ASC'
 
     connection.query(`
     SELECT ZipCodeNeighborhood.Neighborhood, COUNT(*) AS Age_Group_Victimizations
     FROM ZipCodeNeighborhood JOIN 2020Crimes ON ZipCodeNeighborhood.ZipCode = 2020Crimes.ZipCode
-    WHERE 2020Crimes.VictimAgeGroup = '` + age_range + `'
+    WHERE 2020Crimes.VictimAgeGroup = '${agerange}'
     GROUP BY ZipCodeNeighborhood.Neighborhood
-    ORDER BY Age_Group_Victimizations
-    LIMIT ` + age_limit + `;
+    ORDER BY COUNT(*) ${ordering}
+    LIMIT ${numresults}
     `, function (error, results, fields) {
     
         if (error) {
-            console.log(error)
             res.json({ error: error })
         }
 

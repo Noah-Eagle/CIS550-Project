@@ -35,8 +35,8 @@ const getFilteredCrimeGender = async (gender, numresults, ordering) => {
     return res.json()
 }
 
-const getFilteredCrimeAge = async (age_limit, age_range) => {
-    var res = await fetch(`http://${config.server_host}:${config.server_port}/filter/crimes/age?age_limit=${age_limit}&age_range=${age_range}`, {
+const getFilteredCrimeAge = async (agerange, numresults, ordering) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/filter/crimes/age?agerange=${agerange}&numresults=${numresults}&ordering=${ordering}`, {
         method: 'GET',
     })
     return res.json()
