@@ -144,7 +144,7 @@ async function crime_filter_offenselevel(req, res) {
     const ordering = req.query.ordering ? req.query.ordering : 'ASC'
 
     connection.query(`
-    SELECT ZipCodeNeighborhood.Neighborhood, COUNT(*) AS Offense_Count
+    SELECT ZipCodeNeighborhood.Neighborhood, FORMAT(COUNT(*), 0) AS Offense_Count
     FROM ZipCodeNeighborhood JOIN 2020Crimes ON ZipCodeNeighborhood.ZipCode = 2020Crimes.ZipCode
     WHERE 2020Crimes.OffenseLevel = '${level}'
     GROUP BY ZipCodeNeighborhood.Neighborhood
@@ -171,7 +171,7 @@ async function crime_filter_gender(req, res) {
     const ordering = req.query.ordering ? req.query.ordering : 'ASC'
 
     connection.query(`
-    SELECT ZipCodeNeighborhood.Neighborhood, COUNT(*) AS Gender_Victimizations
+    SELECT ZipCodeNeighborhood.Neighborhood, FORMAT(COUNT(*), 0) AS Gender_Victimizations
     FROM ZipCodeNeighborhood JOIN 2020Crimes ON ZipCodeNeighborhood.ZipCode = 2020Crimes.ZipCode
     WHERE 2020Crimes.VictimGender = '${gender}'
     GROUP BY ZipCodeNeighborhood.Neighborhood
@@ -198,7 +198,7 @@ async function crime_filter_age(req, res) {
     const ordering = req.query.ordering ? req.query.ordering : 'ASC'
 
     connection.query(`
-    SELECT ZipCodeNeighborhood.Neighborhood, COUNT(*) AS Age_Group_Victimizations
+    SELECT ZipCodeNeighborhood.Neighborhood, FORMAT(COUNT(*), 0) AS Age_Group_Victimizations
     FROM ZipCodeNeighborhood JOIN 2020Crimes ON ZipCodeNeighborhood.ZipCode = 2020Crimes.ZipCode
     WHERE 2020Crimes.VictimAgeGroup = '${agerange}'
     GROUP BY ZipCodeNeighborhood.Neighborhood
