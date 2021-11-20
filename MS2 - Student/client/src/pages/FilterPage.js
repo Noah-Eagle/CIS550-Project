@@ -65,7 +65,7 @@ const crimeOffenseColumns = [
         title: 'Offense Count',
         dataIndex: 'Offense_Count',
         key: 'Offense_Count',
-        sorter: (a, b) => a.Offense_Count - b.Offense_Count
+        sorter: (a, b) => parseFloat(a.Offense_Count.replace(/,/g, '')) - parseFloat(b.Offense_Count.replace(/,/g, ''))
       },
 ];
 
@@ -80,7 +80,7 @@ const crimeGenderColumns = [
         title: 'Gender Victimizations',
         dataIndex: 'Gender_Victimizations',
         key: 'Gender_Victimizations',
-        sorter: (a, b) => a.Gender_Victimizations - b.Gender_Victimizations
+        sorter: (a, b) => parseFloat(a.Gender_Victimizations.replace(/,/g, '')) - parseFloat(b.Gender_Victimizations.replace(/,/g, ''))
       },
 ];
 
@@ -95,7 +95,7 @@ const crimeAgeColumns = [
         title: 'Age Group Victimizations',
         dataIndex: 'Age_Group_Victimizations',
         key: 'Age_Group_Victimizations',
-        sorter: (a, b) => a.Age_Group_Victimizations - b.Age_Group_Victimizations
+        sorter: (a, b) => parseFloat(a.Age_Group_Victimizations.replace(/,/g, '')) - parseFloat(b.Age_Group_Victimizations.replace(/,/g, ''))
       },
 ];
 
@@ -315,15 +315,9 @@ class FilterPage extends React.Component {
                         <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
                         <Select defaultValue={1} style={{ width: 120 }} onChange={this.handleOffenseLimitChange}>
                             <Option value={1}>Top 1</Option>
-                            <Option value={2}>Top 2</Option>
-                            <Option value={3}>Top 3</Option>
-                            <Option value={4}>Top 4</Option>
                             <Option value={5}>Top 5</Option>
-                            <Option value={6}>Top 6</Option>
-                            <Option value={7}>Top 7</Option>
-                            <Option value={8}>Top 8</Option>
-                            <Option value={9}>Top 9</Option>
                             <Option value={10}>Top 10</Option>
+                            <Option value={Number.MAX_SAFE_INTEGER}>All</Option>
                         </Select>
                         </FormGroup></Col>
                         <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
@@ -367,15 +361,9 @@ class FilterPage extends React.Component {
                         <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
                         <Select defaultValue={1} style={{ width: 120 }} onChange={this.handleGenderLimitChange}>
                             <Option value={1}>Top 1</Option>
-                            <Option value={2}>Top 2</Option>
-                            <Option value={3}>Top 3</Option>
-                            <Option value={4}>Top 4</Option>
                             <Option value={5}>Top 5</Option>
-                            <Option value={6}>Top 6</Option>
-                            <Option value={7}>Top 7</Option>
-                            <Option value={8}>Top 8</Option>
-                            <Option value={9}>Top 9</Option>
                             <Option value={10}>Top 10</Option>
+                            <Option value={Number.MAX_SAFE_INTEGER}>All</Option>
                         </Select>
                         </FormGroup></Col>
                         <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
@@ -423,15 +411,9 @@ class FilterPage extends React.Component {
                             <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
                             <Select defaultValue={1} style={{ width: 120 }} onChange={this.handleAgeLimitChange}>
                             <Option value={1}>Top 1</Option>
-                            <Option value={2}>Top 2</Option>
-                            <Option value={3}>Top 3</Option>
-                            <Option value={4}>Top 4</Option>
                             <Option value={5}>Top 5</Option>
-                            <Option value={6}>Top 6</Option>
-                            <Option value={7}>Top 7</Option>
-                            <Option value={8}>Top 8</Option>
-                            <Option value={9}>Top 9</Option>
                             <Option value={10}>Top 10</Option>
+                            <Option value={Number.MAX_SAFE_INTEGER}>All</Option>
                         </Select>
                         </FormGroup></Col>
                         <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
