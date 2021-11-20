@@ -139,35 +139,20 @@ async function rent_filter(req, res) {
 
 async function crime_filter_offenselevel(req, res) {
 
-    if (req.query.offense_limit && !isNaN(req.query.offense_limit)) {
-
-        var offense_limit = req.query.offense_limit
-
-    } else {
-
-        var offense_limit = Number.MAX_SAFE_INTEGER
-    }
-
-    if (req.query.offense) {
-
-        var offense = req.query.offense
-
-    } else {
-
-        var offense = 'Felony'
-    }
+    const level = req.query.level ? req.query.level : 'Felony'
+    const numresults = req.query.numresults ? req.query.numresults : 1
+    const ordering = req.query.ordering ? req.query.ordering : 'ASC'
 
     connection.query(`
     SELECT ZipCodeNeighborhood.Neighborhood, COUNT(*) AS Offense_Count
     FROM ZipCodeNeighborhood JOIN 2020Crimes ON ZipCodeNeighborhood.ZipCode = 2020Crimes.ZipCode
-    WHERE 2020Crimes.OffenseLevel = '` + offense + `'
+    WHERE 2020Crimes.OffenseLevel = '${level}'
     GROUP BY ZipCodeNeighborhood.Neighborhood
-    ORDER BY Offense_Count
-    LIMIT ` + offense_limit + `;
+    ORDER BY COUNT(*) ${ordering}
+    LIMIT ${numresults}
     `, function (error, results, fields) {
     
         if (error) {
-            console.log(error)
             res.json({ error: error })
         }
 

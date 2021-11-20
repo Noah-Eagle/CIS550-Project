@@ -21,8 +21,8 @@ const getFilteredRents = async (minrent, maxrent) => {
     return res.json()
 }
 
-const getFilteredCrimeOffense = async (offense_limit, offense) => {
-    var res = await fetch(`http://${config.server_host}:${config.server_port}/filter/crimes/offenselevel?offense_limit=${offense_limit}&offense=${offense}`, {
+const getFilteredCrimeOffense = async (level, numresults, ordering) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/filter/crimes/offenselevel?level=${level}&numresults=${numresults}&ordering=${ordering}`, {
         method: 'GET',
     })
     return res.json()
