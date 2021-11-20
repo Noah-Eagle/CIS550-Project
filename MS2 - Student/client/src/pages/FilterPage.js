@@ -12,6 +12,7 @@ import {
     Row,
     Col,
     Divider,
+    Radio,
     Slider,
     Rate
 } from 'antd'
@@ -107,14 +108,17 @@ class FilterPage extends React.Component {
         minrent: '',
         maxrent: '',
         rentResults: [],
-        offense_limit: Number.MAX_SAFE_INTEGER,
-        gender_limit: Number.MAX_SAFE_INTEGER,
-        age_limit: Number.MAX_SAFE_INTEGER,
-        offense: 'Felony',
-        gender: 'F',
-        age_range: '<18',
+        offenselevel: '',
+        offensenumresults: '',
+        offenseorder: '',
         crimeOffenseResults: [],
+        gender: 'F',
+        gendernumresults: Number.MAX_SAFE_INTEGER,
+        genderorder: 'ASC',
         crimeGenderResults: [],
+        agerange: '<18',
+        agenumresults: Number.MAX_SAFE_INTEGER,
+        ageorder: 'ASC',
         crimeAgeResults: []
       }
   
@@ -122,10 +126,13 @@ class FilterPage extends React.Component {
       this.handleMaxRentChange = this.handleMaxRentChange.bind(this)
       this.updateRentSearchResults = this.updateRentSearchResults.bind(this)
 
+      this.handleOffenseChange = this.handleOffenseChange.bind(this)
       this.handleOffenseLimitChange = this.handleOffenseLimitChange.bind(this)
+      this.handleOffenseOrderChange = this.handleOffenseOrderChange.bind(this)
+
       this.handleGenderLimitChange = this.handleGenderLimitChange.bind(this)
       this.handleAgeLimitChange = this.handleAgeLimitChange.bind(this)
-      this.handleOffenseChange = this.handleOffenseChange.bind(this)
+      
       this.handleGenderChange = this.handleGenderChange.bind(this)
       this.handleAgeRangeChange = this.handleAgeRangeChange.bind(this)
       this.updateOffenseCrimeSearchResults = this.updateOffenseCrimeSearchResults.bind(this)
@@ -137,21 +144,20 @@ class FilterPage extends React.Component {
 
 
     componentDidMount() {
-        console.log(this.state.minrent)
-        console.log(typeof this.state.minrent)
+
         getFilteredRents(0, Number.MAX_SAFE_INTEGER).then(res => {
             this.setState({ rentResults: res.results })
         })
 
-        getFilteredCrimeOffense(Number.MAX_SAFE_INTEGER, 'Felony').then(res => {
+        getFilteredCrimeOffense('Felony', 1, 'ASC').then(res => {
             this.setState({crimeOffenseResults: res.results})
         })
 
-        getFilteredCrimeGender(Number.MAX_SAFE_INTEGER, 'F').then(res => {
+        getFilteredCrimeGender('M', Number.MAX_SAFE_INTEGER).then(res => {
             this.setState({crimeGenderResults: res.results})
         })
 
-        getFilteredCrimeAge(Number.MAX_SAFE_INTEGER, '<18').then(res => {
+        getFilteredCrimeAge('<18', Number.MAX_SAFE_INTEGER).then(res => {
             this.setState({crimeAgeResults: res.results})
         })
     }
@@ -169,69 +175,84 @@ class FilterPage extends React.Component {
     }
   
     updateRentSearchResults() {
-        console.log(this.state.minrent)
-        console.log(typeof this.state.minrent)
+
         getFilteredRents(this.state.minrent, this.state.maxrent).then(res => {
             this.setState({ rentResults: res.results })
+            console.log(this.state.minrent)
+            console.log(this.state.maxrent)
         })
     }
   
     
 
 
-
-
-    handleOffenseLimitChange(event) {
-
-        this.setState({ offense_limit: event.target.value})
-    }
-
     handleOffenseChange(value) {
 
-        this.setState({ offense: value})
+        this.setState({ offenselevel: value})
     }
 
-    handleGenderLimitChange(event) {
+    handleOffenseLimitChange(value) {
 
-        this.setState({ gender_limit: event.target.value})
+        this.setState({ offensenumresults: value})
     }
 
-    handleAgeLimitChange(event) {
+    handleOffenseOrderChange(event) {
 
-        this.setState({ age_limit: event.target.value})
+        this.setState({ offenseorder: event.target.value})
     }
+
+    updateOffenseCrimeSearchResults() {
+
+        getFilteredCrimeOffense(this.state.offenselevel, this.state.offensenumresults, this.state.offenseorder).then(res => {
+
+            this.setState({ crimeOffenseResults: res.results })
+        })
+    }
+
+
+
 
     handleGenderChange(value) {
 
         this.setState({ gender: value})
     }
 
+    handleGenderLimitChange(event) {
+
+        this.setState({ gendernumresults: event.target.value})
+    }
+
+
+
+
     handleAgeRangeChange(value) {
 
-        this.setState({ age_range: value})
+        this.setState({ agerange: value})
     }
 
-    updateOffenseCrimeSearchResults() {
+    handleAgeLimitChange(event) {
 
-        getFilteredCrimeOffense(this.state.offense_limit, this.state.offense).then(res => {
-            this.setState({ crimeOffenseResults: res.results })
-        })
+        this.setState({ agenumresults: event.target.value})
     }
+
+
+
+
+
+
+
+
 
     updateGenderCrimeSearchResults() {
 
-        getFilteredCrimeGender(this.state.gender_limit, this.state.gender).then(res => {
+        getFilteredCrimeGender(this.state.gender, this.state.gendernumresults).then(res => {
             this.setState({ crimeGenderResults: res.results })
         })
     }
 
     updateAgeCrimeSearchResults() {
 
-        console.log(this.state.age_limit)
-        console.log(this.state.age_range)
-        console.log(typeof(this.state.age_range))
-
-        getFilteredCrimeAge(this.state.age_limit, this.state.age_range).then(res => {
+        getFilteredCrimeAge(this.state.agerange, this.state.agenumresults).then(res => {
             console.log(res.results)
             this.setState({ crimeAgeResults: res.results })
         })
@@ -275,7 +296,6 @@ class FilterPage extends React.Component {
             <Form style={{ width: '80vw', margin: '0 auto', marginTop: '5vh' }}>
                     <Row>
                         <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
-                            <label>Offense</label>
                             <Select defaultValue="Felony" style={{ width: '20vw' }} onChange={this.handleOffenseChange}>
                                 <Option value="Felony">Felony</Option>
                                 <Option value="Misdemeanor">Misdemeanor</Option>
@@ -283,8 +303,32 @@ class FilterPage extends React.Component {
                             </Select>
                         </FormGroup></Col>
                         <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
-                            <label>Lowest X for Selected Offense</label>
-                            <FormInput placeholder="50" value={this.state.offense_limit} onChange={this.handleOffenseLimitChange} />
+                        <Select defaultValue={1} style={{ width: 120 }} onChange={this.handleOffenseLimitChange}>
+                            <Option value={1}>Top 1</Option>
+                            <Option value={2}>Top 2</Option>
+                            <Option value={3}>Top 3</Option>
+                            <Option value={4}>Top 4</Option>
+                            <Option value={5}>Top 5</Option>
+                            <Option value={6}>Top 6</Option>
+                            <Option value={7}>Top 7</Option>
+                            <Option value={8}>Top 8</Option>
+                            <Option value={9}>Top 9</Option>
+                            <Option value={10}>Top 10</Option>
+                        </Select>
+                        </FormGroup></Col>
+                        <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
+                            <Radio.Group
+                            options={
+                                [
+                                    {label: 'Lowest', value: 'ASC'},
+                                    {label: 'Highest', value: 'DESC'},
+                                ]
+                            }
+                            onChange={this.handleOffenseOrderChange}
+                            defaultValue="ASC"
+                            optionType="button"
+                            buttonStyle="solid"
+                            />
                         </FormGroup></Col>
                         <Col flex={2}><FormGroup style={{ width: '10vw' }}>
                             <Button style={{ marginTop: '0vh' }} onClick={this.updateOffenseCrimeSearchResults}>Search</Button>
