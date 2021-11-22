@@ -12,8 +12,6 @@ app.use(cors({
     origin: '*'
 }));
 
-
-
 app.get('/home', routes.borough_summary)
 
 app.get('/borough-trends', routes.borough_trends)
@@ -21,6 +19,12 @@ app.get('/borough-trends', routes.borough_trends)
 app.get('/filter/rents', routes.rent_filter)
 
 app.get('/filter/crimes', routes.crime_filter)
+
+app.get('/city/rents', routes.city_rents)
+
+app.get('/city/crimelevel', routes.city_crime_level)
+
+app.get('/city/crimeage', routes.city_crime_age)
 
 // // Route 4 - register as GET 
 // app.get('/players', routes.all_players)
