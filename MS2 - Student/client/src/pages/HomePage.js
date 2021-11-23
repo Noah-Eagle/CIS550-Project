@@ -1,7 +1,8 @@
 import React from 'react';
 import {
   Table,
-  Select
+  Select,
+  Divider
 } from 'antd';
 import MenuBar from '../components/MenuBar';
 import { getBoroughSummary } from '../fetcher';
@@ -16,20 +17,19 @@ const boroughSummaryColumns = [
     title: 'Borough',
     dataIndex: 'Borough',
     key: 'Borough',
-    sorter: (a, b) => a.Borough.localeCompare(b.Borough),
+    sorter: (a, b) => a.Borough.localeCompare(b.Borough)
   },
   {
     title: 'Average Rent',
     dataIndex: 'Average_Rent',
     key: 'Average_Rent',
-    sorter: (a, b) => a.Average_Rent - b.Average_Rent,
-    // try adding formatter here?
+    sorter: (a, b) => parseFloat(a.Average_Rent.replace(/,/g, '').replace('$', '')) - parseFloat(b.Average_Rent.replace(/,/g, '').replace('$', ''))
   },
   {
     title: 'Crime Count',
     dataIndex: 'Crime_Count',
     key: 'Crime_Count',
-    sorter: (a, b) => a.Crime_Count - b.Crime_Count
+    sorter: (a, b) => parseFloat(a.Crime_Count.replace(/,/g, '').replace('$', '')) - parseFloat(b.Crime_Count.replace(/,/g, '').replace('$', ''))
     
   }
 ];
@@ -41,7 +41,7 @@ class HomePage extends React.Component {
 
     this.state = {
       boroughSummaryResults: [],
-
+      boroughGraphResults: []
     }
 
     this.yearOnChange = this.yearOnChange.bind(this)
@@ -51,8 +51,13 @@ class HomePage extends React.Component {
 
   componentDidMount() {
 
-    getBoroughSummary(2020).then(res => {
+    getBoroughSummary(2020, 'table').then(res => {
       this.setState({ boroughSummaryResults: res.results })
+
+    })
+    
+    getBoroughSummary(2020, 'graph').then(res => {
+      this.setState({ boroughGraphResults: res.results })
 
     })
     
@@ -60,9 +65,16 @@ class HomePage extends React.Component {
 
   yearOnChange(value) {
 
-      getBoroughSummary(value).then(res => {
+    getBoroughSummary(value, 'table').then(res => {
       this.setState({ boroughSummaryResults: res.results })
+
     })
+    
+    getBoroughSummary(value, 'graph').then(res => {
+      this.setState({ boroughGraphResults: res.results })
+
+    })
+
   }
 
 
@@ -102,7 +114,11 @@ class HomePage extends React.Component {
           <Button variant="outline-primary" href="/borough-trends">View Trends</Button>
         </div>
 
+        <Divider />
+
         <Table dataSource={this.state.boroughSummaryResults} columns={boroughSummaryColumns} pagination={false}></Table>
+
+        <Divider />
 
       </div>
 
@@ -116,7 +132,7 @@ class HomePage extends React.Component {
         <BarChart
           width={500}
           height={300}
-          data={this.state.boroughSummaryResults}
+          data={this.state.boroughGraphResults}
         >
           <CartesianGrid strokeDasharray='3 3' />
           <XAxis dataKey='Borough' />
@@ -137,7 +153,7 @@ class HomePage extends React.Component {
         <BarChart
           width={500}
           height={300}
-          data={this.state.boroughSummaryResults}
+          data={this.state.boroughGraphResults}
         >
           <CartesianGrid strokeDasharray='3 3' />
           <XAxis dataKey='Borough' />

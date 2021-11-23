@@ -15,34 +15,71 @@ connection.connect();
 async function borough_summary(req, res) {
 
     const year = req.query.year ? req.query.year : 2020
+    const usefor = req.query.usefor
     
-    connection.query(`
-    WITH Borough_Rents AS (
-    SELECT NeighborhoodBorough.Borough, AVG(Rent.AvgRent) AS Average_Rent
-    FROM NeighborhoodBorough JOIN Rent ON NeighborhoodBorough.Neighborhood = Rent.Neighborhood
-    WHERE Rent.Year = ${year}
-    GROUP BY NeighborhoodBorough.Borough
-    ),
-    Borough_Crimes AS (
-    SELECT BoroughCrimesAllYears.Borough, BoroughCrimesAllYears.Crime_Count
-    FROM BoroughCrimesAllYears
-    WHERE BoroughCrimesAllYears.Year = ${year}
-    )
-    SELECT Borough_Crimes.Borough, Borough_Rents.Average_Rent, Borough_Crimes.Crime_Count
-    FROM Borough_Crimes LEFT OUTER JOIN Borough_Rents ON Borough_Crimes.Borough = Borough_Rents.Borough
-    ORDER BY Borough_Crimes.Borough;
-    `, function (error, results, fields) {
-    
-        if (error) {
-            console.log(error)
-            res.json({ error: error })
-        }
+    if(usefor === 'graph') {
 
-        else if (results) {
-            res.json({ results: results })
-        }
+        connection.query(`
+        WITH Borough_Rents AS (
+        SELECT NeighborhoodBorough.Borough, AVG(Rent.AvgRent) AS Average_Rent
+        FROM NeighborhoodBorough JOIN Rent ON NeighborhoodBorough.Neighborhood = Rent.Neighborhood
+        WHERE Rent.Year = ${year}
+        GROUP BY NeighborhoodBorough.Borough
+        ),
+        Borough_Crimes AS (
+        SELECT BoroughCrimesAllYears.Borough, BoroughCrimesAllYears.Crime_Count
+        FROM BoroughCrimesAllYears
+        WHERE BoroughCrimesAllYears.Year = ${year}
+        )
+        SELECT Borough_Crimes.Borough, Borough_Rents.Average_Rent, Borough_Crimes.Crime_Count
+        FROM Borough_Crimes LEFT OUTER JOIN Borough_Rents ON Borough_Crimes.Borough = Borough_Rents.Borough
+        ORDER BY Borough_Crimes.Borough;
+        `, function (error, results, fields) {
+        
+            if (error) {
+                console.log(error)
+                res.json({ error: error })
+            }
 
-    });
+            else if (results) {
+                res.json({ results: results })
+            }
+
+        });
+
+    }
+
+    else if (usefor === 'table') {
+
+        connection.query(`
+        WITH Borough_Rents AS (
+        SELECT NeighborhoodBorough.Borough, AVG(Rent.AvgRent) AS Average_Rent
+        FROM NeighborhoodBorough JOIN Rent ON NeighborhoodBorough.Neighborhood = Rent.Neighborhood
+        WHERE Rent.Year = ${year}
+        GROUP BY NeighborhoodBorough.Borough
+        ),
+        Borough_Crimes AS (
+        SELECT BoroughCrimesAllYears.Borough, BoroughCrimesAllYears.Crime_Count
+        FROM BoroughCrimesAllYears
+        WHERE BoroughCrimesAllYears.Year = ${year}
+        )
+        SELECT Borough_Crimes.Borough, CONCAT('$', FORMAT(IFNULL(Borough_Rents.Average_Rent, 0), 2)) AS Average_Rent, FORMAT(Borough_Crimes.Crime_Count, 0) AS Crime_Count
+        FROM Borough_Crimes LEFT OUTER JOIN Borough_Rents ON Borough_Crimes.Borough = Borough_Rents.Borough
+        ORDER BY Borough_Crimes.Borough;
+        `, function (error, results, fields) {
+        
+            if (error) {
+                console.log(error)
+                res.json({ error: error })
+            }
+
+            else if (results) {
+                res.json({ results: results })
+            }
+
+        });
+
+    }
 
 }
 
@@ -77,34 +114,18 @@ async function borough_trends(req, res) {
 
 async function rent_filter(req, res) {
 
-    if (req.query.low_rent_bound && !isNaN(req.query.low_rent_bound)) {
-
-        var lowest_rent = req.query.low_rent_bound
-
-    } else {
-
-        var lowest_rent = 0
-    }
-
-    if (req.query.high_rent_bound && !isNaN(req.query.high_rent_bound)) {
-
-        var highest_rent = req.query.high_rent_bound
-
-    } else {
-
-        var highest_rent = Number.MAX_SAFE_INTEGER
-    }
+    const minrent = req.query.minrent ? req.query.minrent : 0
+    const maxrent = req.query.maxrent ? req.query.maxrent : Number.MAX_SAFE_INTEGER
 
     connection.query(`
-    SELECT Rent.Neighborhood, MIN(Rent.MinRent) AS Cheapest_Rent, AVG(Rent.AvgRent) AS Average_Rent, MAX(Rent.MaxRent) AS Costliest_Rent, MAX(Rent.MaxRent) - MIN(Rent.MinRent) AS Rent_Range
+    SELECT Rent.Neighborhood, CONCAT('$', FORMAT(AVG(Rent.AvgRent), 2)) AS AverageRent, CONCAT('$', FORMAT(MIN(Rent.MinRent), 2)) AS LowestRent, CONCAT('$', FORMAT(MAX(Rent.MaxRent), 2)) AS HighestRent, CONCAT('$', FORMAT((MAX(Rent.MaxRent) - MIN(Rent.MinRent)), 2)) AS RentRange
     FROM Rent
     WHERE Rent.Year = 2020
     GROUP BY Rent.Neighborhood
-    HAVING Average_Rent >= ` + lowest_rent + ` AND Average_Rent <= `+ highest_rent + `
+    HAVING AVG(Rent.AvgRent) >= ${minrent} AND AVG(Rent.AvgRent) <= ${maxrent}
     `, function (error, results, fields) {
     
         if (error) {
-            console.log(error)
             res.json({ error: error })
         }
 
@@ -116,79 +137,76 @@ async function rent_filter(req, res) {
 
 }
 
-async function crime_filter(req, res) {
+async function crime_filter_offenselevel(req, res) {
 
-    if (req.query.felony_limit && !isNaN(req.query.felony_limit)) {
-
-        var felony_limit = req.query.felony_limit
-
-    } else {
-
-        var felony_limit = Number.MAX_SAFE_INTEGER
-    }
-
-    if (req.query.gender_limit && !isNaN(req.query.gender_limit)) {
-
-        var gender_limit = req.query.gender_limit
-
-    } else {
-
-        var gender_limit = Number.MAX_SAFE_INTEGER
-    }
-
-    if (req.query.age_limit && !isNaN(req.query.age_limit)) {
-
-        var age_limit = req.query.age_limit
-
-    } else {
-
-        var age_limit = Number.MAX_SAFE_INTEGER
-    }
-
-    if (req.query.gender) {
-
-        var gender = req.query.gender
-
-    } else {
-
-        var gender = 'F'
-    }
-
-    if (req.query.age_range) {
-
-        var age_range = req.query.age_range
-
-    } else {
-
-        var age_range = '<18'
-    }
+    const level = req.query.level ? req.query.level : 'Felony'
+    const numresults = req.query.numresults ? req.query.numresults : 1
+    const ordering = req.query.ordering ? req.query.ordering : 'ASC'
 
     connection.query(`
-    WITH Least_Felonies AS (SELECT ZipCodeNeighborhood.Neighborhood, COUNT(*) AS Felony_Count
-                       FROM ZipCodeNeighborhood JOIN Crime ON ZipCodeNeighborhood.ZipCode = Crime.ZipCode
-                       WHERE Crime.Year = 2020 AND Crime.OffenseLevel = 'Felony'
-                       GROUP BY ZipCodeNeighborhood.Neighborhood
-                       ORDER BY Felony_Count
-                       LIMIT ` + felony_limit + `),
-    Least_Gender_Victimizations AS (SELECT ZipCodeNeighborhood.Neighborhood, COUNT(*) AS Gender_Victimizations
-                                    FROM ZipCodeNeighborhood JOIN Crime ON ZipCodeNeighborhood.ZipCode = Crime.ZipCode
-                                    WHERE Crime.Year = 2020 AND Crime.VictimGender = '` + gender + `'
-                                    GROUP BY ZipCodeNeighborhood.Neighborhood
-                                    ORDER BY Gender_Victimizations
-                                    LIMIT ` + gender_limit + `),
-    Least_Age_Victimizations AS (SELECT ZipCodeNeighborhood.Neighborhood, COUNT(*) AS Age_Group_Victimizations
-                                 FROM ZipCodeNeighborhood JOIN Crime ON ZipCodeNeighborhood.ZipCode = Crime.ZipCode
-                                 WHERE Crime.Year = 2020 AND Crime.VictimAgeGroup = '` + age_range + `'
-                                 GROUP BY ZipCodeNeighborhood.Neighborhood
-                                 ORDER BY Age_Group_Victimizations
-                                 LIMIT ` + age_limit + `)
-SELECT Least_Felonies.Neighborhood, Least_Felonies.Felony_Count, Least_Gender_Victimizations.Gender_Victimizations, Least_Age_Victimizations.Age_Group_Victimizations
-FROM Least_Felonies JOIN Least_Gender_Victimizations ON Least_Felonies.Neighborhood = Least_Gender_Victimizations.Neighborhood
-                   JOIN Least_Age_Victimizations ON Least_Felonies.Neighborhood = Least_Age_Victimizations.Neighborhood
+    SELECT ZipCodeNeighborhood.Neighborhood, FORMAT(COUNT(*), 0) AS Offense_Count
+    FROM ZipCodeNeighborhood JOIN 2020Crimes ON ZipCodeNeighborhood.ZipCode = 2020Crimes.ZipCode
+    WHERE 2020Crimes.OffenseLevel = '${level}'
+    GROUP BY ZipCodeNeighborhood.Neighborhood
+    ORDER BY COUNT(*) ${ordering}
+    LIMIT ${numresults}
     `, function (error, results, fields) {
     
         if (error) {
-            console.log(error)
+            res.json({ error: error })
+        }
+
+        else if (results) {
+            res.json({ results: results })
+        }
+
+    });
+
+}
+
+async function crime_filter_gender(req, res) {
+
+    const gender = req.query.gender ? req.query.gender : 'M'
+    const numresults = req.query.numresults ? req.query.numresults : 1
+    const ordering = req.query.ordering ? req.query.ordering : 'ASC'
+
+    connection.query(`
+    SELECT ZipCodeNeighborhood.Neighborhood, FORMAT(COUNT(*), 0) AS Gender_Victimizations
+    FROM ZipCodeNeighborhood JOIN 2020Crimes ON ZipCodeNeighborhood.ZipCode = 2020Crimes.ZipCode
+    WHERE 2020Crimes.VictimGender = '${gender}'
+    GROUP BY ZipCodeNeighborhood.Neighborhood
+    ORDER BY COUNT(*) ${ordering}
+    LIMIT ${numresults}
+    `, function (error, results, fields) {
+    
+        if (error) {
+            res.json({ error: error })
+        }
+
+        else if (results) {
+            res.json({ results: results })
+        }
+
+    });
+
+}
+
+async function crime_filter_age(req, res) {
+
+    const agerange = req.query.agerange ? req.query.agerange : '<18'
+    const numresults = req.query.numresults ? req.query.numresults : 1
+    const ordering = req.query.ordering ? req.query.ordering : 'ASC'
+
+    connection.query(`
+    SELECT ZipCodeNeighborhood.Neighborhood, FORMAT(COUNT(*), 0) AS Age_Group_Victimizations
+    FROM ZipCodeNeighborhood JOIN 2020Crimes ON ZipCodeNeighborhood.ZipCode = 2020Crimes.ZipCode
+    WHERE 2020Crimes.VictimAgeGroup = '${agerange}'
+    GROUP BY ZipCodeNeighborhood.Neighborhood
+    ORDER BY COUNT(*) ${ordering}
+    LIMIT ${numresults}
+    `, function (error, results, fields) {
+    
+        if (error) {
             res.json({ error: error })
         }
 
@@ -629,7 +647,10 @@ module.exports = {
     crime_filter,
     city_rents,
     city_crime_level,
-    city_crime_age
+    city_crime_age,
+    crime_filter_offenselevel,
+    crime_filter_gender,
+    crime_filter_age
     // jersey,
     // all_matches,
     // all_players,

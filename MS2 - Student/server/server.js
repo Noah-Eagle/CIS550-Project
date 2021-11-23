@@ -18,7 +18,11 @@ app.get('/borough-trends', routes.borough_trends)
 
 app.get('/filter/rents', routes.rent_filter)
 
-app.get('/filter/crimes', routes.crime_filter)
+app.get('/filter/crimes/offenselevel', routes.crime_filter_offenselevel)
+
+app.get('/filter/crimes/gender', routes.crime_filter_gender)
+
+app.get('/filter/crimes/age', routes.crime_filter_age)
 
 app.get('/city/rents', routes.city_rents)
 
