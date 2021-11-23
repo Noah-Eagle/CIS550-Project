@@ -67,6 +67,11 @@ class MenuBar extends React.Component {
           <NavItem>
             <NavLink active href="/search">
                 Search
+            </NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink active href="/dashboard">
+                Dashboard
               </NavLink>
           </NavItem>
             {/* <Dropdown open={this.state.dropdownOpen} toggle={this.toggleDropdown}>

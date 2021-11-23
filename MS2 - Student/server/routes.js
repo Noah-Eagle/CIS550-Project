@@ -139,35 +139,20 @@ async function rent_filter(req, res) {
 
 async function crime_filter_offenselevel(req, res) {
 
-    if (req.query.offense_limit && !isNaN(req.query.offense_limit)) {
-
-        var offense_limit = req.query.offense_limit
-
-    } else {
-
-        var offense_limit = Number.MAX_SAFE_INTEGER
-    }
-
-    if (req.query.offense) {
-
-        var offense = req.query.offense
-
-    } else {
-
-        var offense = 'Felony'
-    }
+    const level = req.query.level ? req.query.level : 'Felony'
+    const numresults = req.query.numresults ? req.query.numresults : 1
+    const ordering = req.query.ordering ? req.query.ordering : 'ASC'
 
     connection.query(`
-    SELECT ZipCodeNeighborhood.Neighborhood, COUNT(*) AS Offense_Count
+    SELECT ZipCodeNeighborhood.Neighborhood, FORMAT(COUNT(*), 0) AS Offense_Count
     FROM ZipCodeNeighborhood JOIN 2020Crimes ON ZipCodeNeighborhood.ZipCode = 2020Crimes.ZipCode
-    WHERE 2020Crimes.OffenseLevel = '` + offense + `'
+    WHERE 2020Crimes.OffenseLevel = '${level}'
     GROUP BY ZipCodeNeighborhood.Neighborhood
-    ORDER BY Offense_Count
-    LIMIT ` + offense_limit + `;
+    ORDER BY COUNT(*) ${ordering}
+    LIMIT ${numresults}
     `, function (error, results, fields) {
     
         if (error) {
-            console.log(error)
             res.json({ error: error })
         }
 
@@ -181,35 +166,20 @@ async function crime_filter_offenselevel(req, res) {
 
 async function crime_filter_gender(req, res) {
 
-    if (req.query.gender_limit && !isNaN(req.query.gender_limit)) {
-
-        var gender_limit = req.query.gender_limit
-
-    } else {
-
-        var gender_limit = Number.MAX_SAFE_INTEGER
-    }
-
-    if (req.query.gender) {
-
-        var gender = req.query.gender
-
-    } else {
-
-        var gender = 'F'
-    }
+    const gender = req.query.gender ? req.query.gender : 'M'
+    const numresults = req.query.numresults ? req.query.numresults : 1
+    const ordering = req.query.ordering ? req.query.ordering : 'ASC'
 
     connection.query(`
-    SELECT ZipCodeNeighborhood.Neighborhood, COUNT(*) AS Gender_Victimizations
+    SELECT ZipCodeNeighborhood.Neighborhood, FORMAT(COUNT(*), 0) AS Gender_Victimizations
     FROM ZipCodeNeighborhood JOIN 2020Crimes ON ZipCodeNeighborhood.ZipCode = 2020Crimes.ZipCode
-    WHERE 2020Crimes.VictimGender = '` + gender + `'
+    WHERE 2020Crimes.VictimGender = '${gender}'
     GROUP BY ZipCodeNeighborhood.Neighborhood
-    ORDER BY Gender_Victimizations
-    LIMIT ` + gender_limit + `;
+    ORDER BY COUNT(*) ${ordering}
+    LIMIT ${numresults}
     `, function (error, results, fields) {
     
         if (error) {
-            console.log(error)
             res.json({ error: error })
         }
 
@@ -223,31 +193,37 @@ async function crime_filter_gender(req, res) {
 
 async function crime_filter_age(req, res) {
 
-    if (req.query.age_limit && !isNaN(req.query.age_limit)) {
-
-        var age_limit = req.query.age_limit
-
-    } else {
-
-        var age_limit = Number.MAX_SAFE_INTEGER
-    }
-
-    if (req.query.age_range) {
-
-        var age_range = req.query.age_range
-
-    } else {
-
-        var age_range = '<18'
-    }
+    const agerange = req.query.agerange ? req.query.agerange : '<18'
+    const numresults = req.query.numresults ? req.query.numresults : 1
+    const ordering = req.query.ordering ? req.query.ordering : 'ASC'
 
     connection.query(`
-    SELECT ZipCodeNeighborhood.Neighborhood, COUNT(*) AS Age_Group_Victimizations
+    SELECT ZipCodeNeighborhood.Neighborhood, FORMAT(COUNT(*), 0) AS Age_Group_Victimizations
     FROM ZipCodeNeighborhood JOIN 2020Crimes ON ZipCodeNeighborhood.ZipCode = 2020Crimes.ZipCode
-    WHERE 2020Crimes.VictimAgeGroup = '` + age_range + `'
+    WHERE 2020Crimes.VictimAgeGroup = '${agerange}'
     GROUP BY ZipCodeNeighborhood.Neighborhood
-    ORDER BY Age_Group_Victimizations
-    LIMIT ` + age_limit + `;
+    ORDER BY COUNT(*) ${ordering}
+    LIMIT ${numresults}
+    `, function (error, results, fields) {
+    
+        if (error) {
+            res.json({ error: error })
+        }
+
+        else if (results) {
+            res.json({ results: results })
+        }
+
+    });
+
+}
+
+async function city_rents(req, res) {
+    connection.query(`
+    SELECT CONCAT(Year,'-' ,Month) As Date, AVG(AvgRent) AVG, AVG(MinRent) MIN, AVG(MaxRent) MAX
+    FROM Rent
+    GROUP BY Year, Month
+    ORDER BY Year, Month
     `, function (error, results, fields) {
     
         if (error) {
@@ -260,8 +236,25 @@ async function crime_filter_age(req, res) {
         }
 
     });
-
 }
+
+async function city_crime_level(req, res) {
+    connection.query(`
+    SELECT * From NYC_Crime_Level_Count;
+    `, function (error, results, fields) {
+    
+        if (error) {
+            console.log(error)
+            res.json({ error: error })
+        }
+
+        else if (results) {
+            res.json({ results: results })
+        }
+
+    });
+}
+
 
 async function search_neighborhood(req, res) {
     const name = req.query.name ? `%${req.query.name}%`: "%"
@@ -305,7 +298,25 @@ async function search_neighborhood_id(req, res) {
     });
 }
 
+async function city_crime_age(req, res) {
+    connection.query(`
+    With AddTotal AS ( SELECT *, AG1+AG2+AG3+AG4+AG5 As Total
+        From NYC_Crime_AgeGroup_Count )
+        SELECT Date, AG1/Total AS AG1_ratio, AG2/Total AS AG2_ratio, AG3/Total AS AG3_ratio, AG4/Total AS AG4_ratio, AG5/Total AS AG5_ratio
+        From AddTotal
+    `, function (error, results, fields) {
+    
+        if (error) {
+            console.log(error)
+            res.json({ error: error })
+        }
 
+        else if (results) {
+            res.json({ results: results })
+        }
+
+    });
+}
 
 // async function jersey(req, res) {
 //     const colors = ['red', 'blue']
@@ -676,6 +687,10 @@ module.exports = {
     borough_summary,
     borough_trends,
     rent_filter,
+    //crime_filter,
+    city_rents,
+    city_crime_level,
+    city_crime_age,
     crime_filter_offenselevel,
     crime_filter_gender,
     crime_filter_age,
