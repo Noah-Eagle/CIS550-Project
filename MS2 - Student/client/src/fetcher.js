@@ -112,10 +112,10 @@ export {
     getBoroughSummary,
     getBoroughTrends,
     getFilteredRents,
-    getFilteredCrime,
+    //getFilteredCrime,
     getCityRents,
     getCityCrimeLevel,
-    getCityCrimeAge
+    getCityCrimeAge,
     getFilteredCrimeOffense,
     getFilteredCrimeGender,
     getFilteredCrimeAge

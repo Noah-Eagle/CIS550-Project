@@ -644,7 +644,7 @@ module.exports = {
     borough_summary,
     borough_trends,
     rent_filter,
-    crime_filter,
+    //crime_filter,
     city_rents,
     city_crime_level,
     city_crime_age,
