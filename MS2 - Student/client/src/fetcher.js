@@ -7,6 +7,27 @@ const getBoroughSummary = async (year, usefor) => {
     return res.json()
 }
 
+const getCityRents = async (year) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/city/rents`, {
+        method: 'GET',
+    })
+    return res.json()
+}
+
+const getCityCrimeLevel = async (year) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/city/crimelevel`, {
+        method: 'GET',
+    })
+    return res.json()
+}
+
+const getCityCrimeAge = async (year) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/city/crimeage`, {
+        method: 'GET',
+    })
+    return res.json()
+}
+
 const getBoroughTrends = async (borough) => {
     var res = await fetch(`http://${config.server_host}:${config.server_port}/borough-trends?borough=${borough}`, {
         method: 'GET',
@@ -91,6 +112,10 @@ export {
     getBoroughSummary,
     getBoroughTrends,
     getFilteredRents,
+    getFilteredCrime,
+    getCityRents,
+    getCityCrimeLevel,
+    getCityCrimeAge
     getFilteredCrimeOffense,
     getFilteredCrimeGender,
     getFilteredCrimeAge

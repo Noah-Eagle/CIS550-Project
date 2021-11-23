@@ -218,8 +218,62 @@ async function crime_filter_age(req, res) {
 
 }
 
+async function city_rents(req, res) {
+    connection.query(`
+    SELECT CONCAT(Year,'-' ,Month) As Date, AVG(AvgRent) AVG, AVG(MinRent) MIN, AVG(MaxRent) MAX
+    FROM Rent
+    GROUP BY Year, Month
+    ORDER BY Year, Month
+    `, function (error, results, fields) {
+    
+        if (error) {
+            console.log(error)
+            res.json({ error: error })
+        }
 
+        else if (results) {
+            res.json({ results: results })
+        }
 
+    });
+}
+
+async function city_crime_level(req, res) {
+    connection.query(`
+    SELECT * From NYC_Crime_Level_Count;
+    `, function (error, results, fields) {
+    
+        if (error) {
+            console.log(error)
+            res.json({ error: error })
+        }
+
+        else if (results) {
+            res.json({ results: results })
+        }
+
+    });
+}
+
+async function city_crime_age(req, res) {
+    connection.query(`
+    With AddTotal AS ( SELECT *, AG1+AG2+AG3+AG4+AG5 As Total
+        From NYC_Crime_AgeGroup_Count )
+        SELECT Date, AG1/Total AS AG1_ratio, AG2/Total AS AG2_ratio, AG3/Total AS AG3_ratio, AG4/Total AS AG4_ratio, AG5/Total AS AG5_ratio
+        From AddTotal
+    `, function (error, results, fields) {
+    
+        if (error) {
+            console.log(error)
+            res.json({ error: error })
+        }
+
+        else if (results) {
+            res.json({ results: results })
+        }
+
+    });
+}
 
 // async function jersey(req, res) {
 //     const colors = ['red', 'blue']
@@ -590,6 +644,10 @@ module.exports = {
     borough_summary,
     borough_trends,
     rent_filter,
+    crime_filter,
+    city_rents,
+    city_crime_level,
+    city_crime_age,
     crime_filter_offenselevel,
     crime_filter_gender,
     crime_filter_age
