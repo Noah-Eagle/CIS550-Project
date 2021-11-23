@@ -263,6 +263,47 @@ async function crime_filter_age(req, res) {
 
 }
 
+async function search_neighborhood(req, res) {
+    const name = req.query.name ? `%${req.query.name}%`: "%"
+    connection.query(`
+    SELECT DISTINCT ZCN.Neighborhood, COUNT(ZCN.ZipCode) as NumZipCodes
+    FROM ZipCodeNeighborhood as ZCN
+    WHERE ZCN.Neighborhood LIKE '${name}'
+    GROUP BY ZCN.Neighborhood
+    UNION
+    SELECT DISTINCT ZCN.Neighborhood, COUNT(ZCN.ZipCode) as NumZipCodes
+    FROM ZipCodeNeighborhood as ZCN
+    WHERE ZCN.ZipCode like '${name}'
+    GROUP BY ZCN.Neighborhood;`, function (error, results, fields) {
+
+        if (error) {
+            console.log(error)
+            res.json({ error: error })
+        } else if (results) {
+            res.json({ results: results })
+        }
+    });
+}
+
+async function search_neighborhood_id(req, res) {
+    const neighborhood = req.query.neighborhood ? `${req.query.neighborhood}`: ""
+    connection.query(`WITH CRIME_STAT (Month, Year, Crime_Count) AS (SELECT C.Month, C.Year, COUNT(*) as Crime_Count
+    FROM Crime as C JOIN ZipCodeNeighborhood ZCN on C.ZipCode = ZCN.ZipCode
+    WHERE ZCN.Neighborhood= '${neighborhood}'
+    GROUP BY C.Month,C.Year)
+    SELECT Rent.Neighborhood, Rent.Month, Rent.Year, Rent.AvgRent, Rent.MinRent, Rent.MaxRent,
+           CRIME_STAT.Crime_Count
+    FROM CRIME_STAT JOIN Rent on Rent.Month = CRIME_STAT.Month AND Rent.Year = CRIME_STAT.Year
+    WHERE Rent.Neighborhood ='${neighborhood}';`, function (error, results, fields) {
+
+        if (error) {
+            console.log(error)
+            res.json({ error: error })
+        } else if (results) {
+            res.json({ results: results })
+        }
+    });
+}
 
 
 
@@ -637,7 +678,9 @@ module.exports = {
     rent_filter,
     crime_filter_offenselevel,
     crime_filter_gender,
-    crime_filter_age
+    crime_filter_age,
+    search_neighborhood,
+    search_neighborhood_id
     // jersey,
     // all_matches,
     // all_players,

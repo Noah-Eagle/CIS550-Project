@@ -9,6 +9,7 @@ import {
 import HomePage from './pages/HomePage';
 import BoroughTrendsPage from './pages/BoroughTrendsPage';
 import FilterPage from './pages/FilterPage';
+import SearchPage from './pages/SearchPage';
 // import MatchesPage from './pages/MatchesPage';
 
 import 'antd/dist/antd.css';
@@ -36,6 +37,11 @@ ReactDOM.render(
 							render={() => (
 								<FilterPage />
 							)}/>
+		<Route exact
+							path="/search"
+							render={() => (
+								<SearchPage />
+							)}/>							
         {/* <Route exact
 							path="/matches"
 							render={() => (

@@ -42,6 +42,13 @@ const getFilteredCrimeAge = async (age_limit, age_range) => {
     return res.json()
 }
 
+const getSearchName = async (name) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/search?name=${name}`, {
+        method: 'GET',
+    })
+    return res.json()
+}
+
 // const getAllMatches = async (page, pagesize, league) => {
 //     var res = await fetch(`http://${config.server_host}:${config.server_port}/matches/${league}?page=${page}&pagesize=${pagesize}`, {
 //         method: 'GET',
@@ -93,7 +100,8 @@ export {
     getFilteredRents,
     getFilteredCrimeOffense,
     getFilteredCrimeGender,
-    getFilteredCrimeAge
+    getFilteredCrimeAge,
+    getSearchName
     // getAllMatches,
     // getAllPlayers,
     // getMatch,

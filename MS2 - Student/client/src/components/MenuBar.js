@@ -64,6 +64,11 @@ class MenuBar extends React.Component {
                 Filter
               </NavLink>
           </NavItem>
+          <NavItem>
+            <NavLink active href="/search">
+                Search
+              </NavLink>
+          </NavItem>
             {/* <Dropdown open={this.state.dropdownOpen} toggle={this.toggleDropdown}>
               <DropdownToggle nav caret>
                 Trends
