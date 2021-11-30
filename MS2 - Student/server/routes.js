@@ -137,74 +137,38 @@ async function rent_filter(req, res) {
 
 }
 
-async function crime_filter_offenselevel(req, res) {
+async function crime_filter(req, res) {
 
     const level = req.query.level ? req.query.level : 'Felony'
-    const numresults = req.query.numresults ? req.query.numresults : 1
-    const ordering = req.query.ordering ? req.query.ordering : 'ASC'
-
-    connection.query(`
-    SELECT ZipCodeNeighborhood.Neighborhood, FORMAT(COUNT(*), 0) AS Offense_Count
-    FROM ZipCodeNeighborhood JOIN 2020Crimes ON ZipCodeNeighborhood.ZipCode = 2020Crimes.ZipCode
-    WHERE 2020Crimes.OffenseLevel = '${level}'
-    GROUP BY ZipCodeNeighborhood.Neighborhood
-    ORDER BY COUNT(*) ${ordering}
-    LIMIT ${numresults}
-    `, function (error, results, fields) {
-    
-        if (error) {
-            res.json({ error: error })
-        }
-
-        else if (results) {
-            res.json({ results: results })
-        }
-
-    });
-
-}
-
-async function crime_filter_gender(req, res) {
-
+    const numLevelResults = req.query.numLevelResults ? req.query.numLevelResults : 10
     const gender = req.query.gender ? req.query.gender : 'M'
-    const numresults = req.query.numresults ? req.query.numresults : 1
-    const ordering = req.query.ordering ? req.query.ordering : 'ASC'
-
-    connection.query(`
-    SELECT ZipCodeNeighborhood.Neighborhood, FORMAT(COUNT(*), 0) AS Gender_Victimizations
-    FROM ZipCodeNeighborhood JOIN 2020Crimes ON ZipCodeNeighborhood.ZipCode = 2020Crimes.ZipCode
-    WHERE 2020Crimes.VictimGender = '${gender}'
-    GROUP BY ZipCodeNeighborhood.Neighborhood
-    ORDER BY COUNT(*) ${ordering}
-    LIMIT ${numresults}
-    `, function (error, results, fields) {
-    
-        if (error) {
-            res.json({ error: error })
-        }
-
-        else if (results) {
-            res.json({ results: results })
-        }
-
-    });
-
-}
-
-async function crime_filter_age(req, res) {
-
+    const numGenderResults = req.query.numGenderResults ? req.query.numGenderResults : 10
     const agerange = req.query.agerange ? req.query.agerange : '<18'
-    const numresults = req.query.numresults ? req.query.numresults : 1
+    const numAgeResults = req.query.numAgeResults ? req.query.numAgeResults : 5
     const ordering = req.query.ordering ? req.query.ordering : 'ASC'
 
     connection.query(`
-    SELECT ZipCodeNeighborhood.Neighborhood, FORMAT(COUNT(*), 0) AS Age_Group_Victimizations
-    FROM ZipCodeNeighborhood JOIN 2020Crimes ON ZipCodeNeighborhood.ZipCode = 2020Crimes.ZipCode
-    WHERE 2020Crimes.VictimAgeGroup = '${agerange}'
-    GROUP BY ZipCodeNeighborhood.Neighborhood
-    ORDER BY COUNT(*) ${ordering}
-    LIMIT ${numresults}
-    `, function (error, results, fields) {
+    WITH Least_Offenses AS (SELECT ZipCodeNeighborhood.Neighborhood, COUNT(*) AS Offense_Count
+                       FROM ZipCodeNeighborhood JOIN 2020Crimes ON ZipCodeNeighborhood.ZipCode = 2020Crimes.ZipCode
+                       WHERE 2020Crimes.OffenseLevel = '${level}'
+                       GROUP BY ZipCodeNeighborhood.Neighborhood
+                       ORDER BY Offense_Count ${ordering}
+                       LIMIT ${numLevelResults}),
+    Least_Gender_Victimizations AS (SELECT ZipCodeNeighborhood.Neighborhood, COUNT(*) AS Gender_Victimizations
+                                    FROM ZipCodeNeighborhood JOIN 2020Crimes ON ZipCodeNeighborhood.ZipCode = 2020Crimes.ZipCode
+                                    WHERE 2020Crimes.VictimGender = '${gender}'
+                                    GROUP BY ZipCodeNeighborhood.Neighborhood
+                                    ORDER BY Gender_Victimizations ${ordering}
+                                    LIMIT ${numGenderResults}),
+    Least_Age_Victimizations AS (SELECT ZipCodeNeighborhood.Neighborhood, COUNT(*) AS Age_Group_Victimizations
+                                 FROM ZipCodeNeighborhood JOIN 2020Crimes ON ZipCodeNeighborhood.ZipCode = 2020Crimes.ZipCode
+                                 WHERE 2020Crimes.VictimAgeGroup = '${agerange}'
+                                 GROUP BY ZipCodeNeighborhood.Neighborhood
+                                 ORDER BY Age_Group_Victimizations ${ordering}
+                                 LIMIT ${numAgeResults})
+SELECT Least_Offenses.Neighborhood, Least_Offenses.Offense_Count, Least_Gender_Victimizations.Gender_Victimizations, Least_Age_Victimizations.Age_Group_Victimizations
+FROM Least_Offenses JOIN Least_Gender_Victimizations ON Least_Offenses.Neighborhood = Least_Gender_Victimizations.Neighborhood
+                   JOIN Least_Age_Victimizations ON Least_Offenses.Neighborhood = Least_Age_Victimizations.Neighborhood`, function (error, results, fields) {
     
         if (error) {
             res.json({ error: error })
@@ -687,13 +651,10 @@ module.exports = {
     borough_summary,
     borough_trends,
     rent_filter,
-    //crime_filter,
     city_rents,
     city_crime_level,
     city_crime_age,
-    crime_filter_offenselevel,
-    crime_filter_gender,
-    crime_filter_age,
+    crime_filter,
     search_neighborhood,
     search_neighborhood_id
     // jersey,
