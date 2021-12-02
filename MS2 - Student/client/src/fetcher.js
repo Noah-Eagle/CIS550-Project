@@ -1,7 +1,7 @@
 import config from './config.json'
 
 const getBoroughSummary = async (year, usefor) => {
-    var res = await fetch(`http://${config.server_host}:${config.server_port}/home?year=${year}&usefor=${usefor}`, {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/borough/summary?year=${year}&usefor=${usefor}`, {
         method: 'GET',
     })
     return res.json()
@@ -29,7 +29,7 @@ const getCityCrimeAge = async (year) => {
 }
 
 const getBoroughTrends = async (borough) => {
-    var res = await fetch(`http://${config.server_host}:${config.server_port}/borough-trends?borough=${borough}`, {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/borough/trends?borough=${borough}`, {
         method: 'GET',
     })
     return res.json()

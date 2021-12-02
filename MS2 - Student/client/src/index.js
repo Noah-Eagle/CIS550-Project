@@ -24,12 +24,12 @@ ReactDOM.render(
     <Router>
       <Switch>
         <Route exact
-							path="/home"
+							path="/borough/summary"
 							render={() => (
 								<BoroughPage />
 							)}/>
         <Route exact
-							path="/borough-trends"
+							path="/borough/trends"
 							render={() => (
 								<BoroughTrendsPage />
 							)}/>

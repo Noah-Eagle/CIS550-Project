@@ -12,9 +12,9 @@ app.use(cors({
     origin: '*'
 }));
 
-app.get('/home', routes.borough_summary)
+app.get('/borough/summary', routes.borough_summary)
 
-app.get('/borough-trends', routes.borough_trends)
+app.get('/borough/trends', routes.borough_trends)
 
 app.get('/filter/rents', routes.rent_filter)
 

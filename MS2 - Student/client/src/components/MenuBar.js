@@ -51,14 +51,18 @@ class MenuBar extends React.Component {
         return(
 
       <Navbar type="dark" theme="primary" expand="md">
-        <NavbarBrand href="/home">NYC Neighborhood Finder</NavbarBrand>
+        <NavbarBrand href="/dashboard">NYC Neighborhood Finder</NavbarBrand>
           <Nav navbar>
           <NavItem>
-              <NavLink active href="/home">
-                Home
+            <NavLink active href="/dashboard">
+                Dashboard
+              </NavLink>
+          </NavItem>
+          <NavItem>
+              <NavLink active href="/borough/summary">
+                Borough Info
               </NavLink>
             </NavItem>
-
           <NavItem>
             <NavLink active href="/filter">
                 Filter
@@ -68,11 +72,6 @@ class MenuBar extends React.Component {
             <NavLink active href="/search">
                 Search
             </NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink active href="/dashboard">
-                Dashboard
-              </NavLink>
           </NavItem>
             {/* <Dropdown open={this.state.dropdownOpen} toggle={this.toggleDropdown}>
               <DropdownToggle nav caret>
