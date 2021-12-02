@@ -6,7 +6,7 @@ import {
 	Switch
 } from 'react-router-dom';
 
-import HomePage from './pages/HomePage';
+import BoroughPage from './pages/BoroughPage';
 import BoroughTrendsPage from './pages/BoroughTrendsPage';
 import FilterPage from './pages/FilterPage';
 import SearchPage from './pages/SearchPage';
@@ -26,7 +26,7 @@ ReactDOM.render(
         <Route exact
 							path="/home"
 							render={() => (
-								<HomePage />
+								<BoroughPage />
 							)}/>
         <Route exact
 							path="/borough-trends"

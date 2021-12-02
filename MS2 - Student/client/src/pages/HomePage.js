@@ -34,7 +34,7 @@ const boroughSummaryColumns = [
   }
 ];
 
-class HomePage extends React.Component {
+class BoroughPage extends React.Component {
 
   constructor(props) {
     super(props)
@@ -174,4 +174,4 @@ class HomePage extends React.Component {
 
 }
 
-export default HomePage
+export default BoroughPage

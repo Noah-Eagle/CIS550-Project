@@ -148,27 +148,35 @@ async function crime_filter(req, res) {
     const ordering = req.query.ordering ? req.query.ordering : 'ASC'
 
     connection.query(`
-    WITH Least_Offenses AS (SELECT ZipCodeNeighborhood.Neighborhood, COUNT(*) AS Offense_Count
-                       FROM ZipCodeNeighborhood JOIN 2020Crimes ON ZipCodeNeighborhood.ZipCode = 2020Crimes.ZipCode
-                       WHERE 2020Crimes.OffenseLevel = '${level}'
-                       GROUP BY ZipCodeNeighborhood.Neighborhood
-                       ORDER BY Offense_Count ${ordering}
-                       LIMIT ${numLevelResults}),
-    Least_Gender_Victimizations AS (SELECT ZipCodeNeighborhood.Neighborhood, COUNT(*) AS Gender_Victimizations
-                                    FROM ZipCodeNeighborhood JOIN 2020Crimes ON ZipCodeNeighborhood.ZipCode = 2020Crimes.ZipCode
-                                    WHERE 2020Crimes.VictimGender = '${gender}'
-                                    GROUP BY ZipCodeNeighborhood.Neighborhood
-                                    ORDER BY Gender_Victimizations ${ordering}
-                                    LIMIT ${numGenderResults}),
-    Least_Age_Victimizations AS (SELECT ZipCodeNeighborhood.Neighborhood, COUNT(*) AS Age_Group_Victimizations
-                                 FROM ZipCodeNeighborhood JOIN 2020Crimes ON ZipCodeNeighborhood.ZipCode = 2020Crimes.ZipCode
-                                 WHERE 2020Crimes.VictimAgeGroup = '${agerange}'
-                                 GROUP BY ZipCodeNeighborhood.Neighborhood
-                                 ORDER BY Age_Group_Victimizations ${ordering}
-                                 LIMIT ${numAgeResults})
-SELECT Least_Offenses.Neighborhood, Least_Offenses.Offense_Count, Least_Gender_Victimizations.Gender_Victimizations, Least_Age_Victimizations.Age_Group_Victimizations
-FROM Least_Offenses JOIN Least_Gender_Victimizations ON Least_Offenses.Neighborhood = Least_Gender_Victimizations.Neighborhood
-                   JOIN Least_Age_Victimizations ON Least_Offenses.Neighborhood = Least_Age_Victimizations.Neighborhood`, function (error, results, fields) {
+    WITH Least_Offenses AS (
+    SELECT ZipCodeNeighborhood.Neighborhood, COUNT(*) AS Offense_Count
+    FROM ZipCodeNeighborhood JOIN 2020Crimes ON ZipCodeNeighborhood.ZipCode = 2020Crimes.ZipCode
+    WHERE 2020Crimes.OffenseLevel = '${level}'
+    GROUP BY ZipCodeNeighborhood.Neighborhood
+    ORDER BY Offense_Count ${ordering}
+    LIMIT ${numLevelResults}
+    ),
+    Least_Gender_Victimizations AS (
+    SELECT ZipCodeNeighborhood.Neighborhood, COUNT(*) AS Gender_Victimizations
+    FROM ZipCodeNeighborhood JOIN 2020Crimes ON ZipCodeNeighborhood.ZipCode = 2020Crimes.ZipCode
+    WHERE 2020Crimes.VictimGender = '${gender}'
+    GROUP BY ZipCodeNeighborhood.Neighborhood
+    ORDER BY Gender_Victimizations ${ordering}
+    LIMIT ${numGenderResults}
+    ),
+    Least_Age_Victimizations AS (
+    SELECT ZipCodeNeighborhood.Neighborhood, COUNT(*) AS Age_Group_Victimizations
+    FROM ZipCodeNeighborhood JOIN 2020Crimes ON ZipCodeNeighborhood.ZipCode = 2020Crimes.ZipCode
+    WHERE 2020Crimes.VictimAgeGroup = '${agerange}'
+    GROUP BY ZipCodeNeighborhood.Neighborhood
+    ORDER BY Age_Group_Victimizations ${ordering}
+    LIMIT ${numAgeResults}
+    )
+    SELECT Least_Offenses.Neighborhood, FORMAT(Least_Offenses.Offense_Count, 0) AS Offense_Count, FORMAT(Least_Gender_Victimizations.Gender_Victimizations, 0) AS Gender_Victimizations, 
+    FORMAT(Least_Age_Victimizations.Age_Group_Victimizations, 0) AS Age_Group_Victimizations
+    FROM Least_Offenses JOIN Least_Gender_Victimizations ON Least_Offenses.Neighborhood = Least_Gender_Victimizations.Neighborhood
+    JOIN Least_Age_Victimizations ON Least_Offenses.Neighborhood = Least_Age_Victimizations.Neighborhood
+    `, function (error, results, fields) {
     
         if (error) {
             res.json({ error: error })
@@ -184,14 +192,13 @@ FROM Least_Offenses JOIN Least_Gender_Victimizations ON Least_Offenses.Neighborh
 
 async function city_rents(req, res) {
     connection.query(`
-    SELECT CONCAT(Year,'-' ,Month) As Date, AVG(AvgRent) AVG, AVG(MinRent) MIN, AVG(MaxRent) MAX
+    SELECT CONCAT(Year, '-', Month) AS Date, AVG(AvgRent) AVG, AVG(MinRent) MIN, AVG(MaxRent) MAX
     FROM Rent
     GROUP BY Year, Month
     ORDER BY Year, Month
     `, function (error, results, fields) {
     
         if (error) {
-            console.log(error)
             res.json({ error: error })
         }
 
@@ -208,7 +215,6 @@ async function city_crime_level(req, res) {
     `, function (error, results, fields) {
     
         if (error) {
-            console.log(error)
             res.json({ error: error })
         }
 
@@ -234,7 +240,6 @@ async function search_neighborhood(req, res) {
     GROUP BY ZCN.Neighborhood;`, function (error, results, fields) {
 
         if (error) {
-            console.log(error)
             res.json({ error: error })
         } else if (results) {
             res.json({ results: results })
@@ -244,17 +249,16 @@ async function search_neighborhood(req, res) {
 
 async function search_neighborhood_id(req, res) {
     const neighborhood = req.query.neighborhood ? `${req.query.neighborhood}`: ""
-    connection.query(`WITH CRIME_STAT (Month, Year, Crime_Count) AS (SELECT C.Month, C.Year, COUNT(*) as Crime_Count
+    connection.query(`
+    WITH CRIME_STAT (Month, Year, Crime_Count) AS (SELECT C.Month, C.Year, COUNT(*) as Crime_Count
     FROM Crime as C JOIN ZipCodeNeighborhood ZCN on C.ZipCode = ZCN.ZipCode
     WHERE ZCN.Neighborhood= '${neighborhood}'
     GROUP BY C.Month,C.Year)
-    SELECT Rent.Neighborhood, Rent.Month, Rent.Year, Rent.AvgRent, Rent.MinRent, Rent.MaxRent,
-           CRIME_STAT.Crime_Count
+    SELECT Rent.Neighborhood, Rent.Month, Rent.Year, Rent.AvgRent, Rent.MinRent, Rent.MaxRent, CRIME_STAT.Crime_Count
     FROM CRIME_STAT JOIN Rent on Rent.Month = CRIME_STAT.Month AND Rent.Year = CRIME_STAT.Year
     WHERE Rent.Neighborhood ='${neighborhood}';`, function (error, results, fields) {
 
         if (error) {
-            console.log(error)
             res.json({ error: error })
         } else if (results) {
             res.json({ results: results })
@@ -271,7 +275,6 @@ async function city_crime_age(req, res) {
     `, function (error, results, fields) {
     
         if (error) {
-            console.log(error)
             res.json({ error: error })
         }
 

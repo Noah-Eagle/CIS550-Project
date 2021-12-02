@@ -65,19 +65,19 @@ const crimeColumns = [
         title: 'Offense Count',
         dataIndex: 'Offense_Count',
         key: 'Offense_Count',
-        sorter: (a, b) => a.Offense_Count - b.Offense_Count
+        sorter: (a, b) => parseFloat(a.Offense_Count.replace(/,/g, '').replace('$', '')) - parseFloat(b.Offense_Count.replace(/,/g, '').replace('$', ''))
     },
     {
         title: 'Gender Victimizations',
         dataIndex: 'Gender_Victimizations',
         key: 'Gender_Victimizations',
-        sorter: (a, b) => a.Gender_Victimizations - b.Gender_Victimizations
+        sorter: (a, b) => parseFloat(a.Gender_Victimizations.replace(/,/g, '').replace('$', '')) - parseFloat(b.Gender_Victimizations.replace(/,/g, '').replace('$', ''))
     },
     {
         title: 'Age Group Victimizations',
         dataIndex: 'Age_Group_Victimizations',
         key: 'Age_Group_Victimizations',
-        sorter: (a, b) => a.Age_Group_Victimizations - b.Age_Group_Victimizations
+        sorter: (a, b) => parseFloat(a.Age_Group_Victimizations.replace(/,/g, '').replace('$', '')) - parseFloat(b.Age_Group_Victimizations.replace(/,/g, '').replace('$', ''))
     },
 ];
 
