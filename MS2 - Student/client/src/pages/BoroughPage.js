@@ -111,7 +111,7 @@ class BoroughPage extends React.Component {
         </div>
 
         <div style={{ width: '7vw', float: 'left', marginBottom: '2vh'}}>
-          <Button variant="outline-primary" href="/borough-trends">View Trends</Button>
+          <Button variant="outline-primary" href="/borough/trends">View Trends</Button>
         </div>
 
         <Divider />
