@@ -92,7 +92,7 @@ class DashboardPage extends React.Component {
       <h4 style={{textAlign: 'center'}}>NYC Crime Count By Level</h4>
 
       <ResponsiveContainer width='100%' aspect={2.5} alignItems='center'>
-        <AreaChart
+        <BarChart
           width={500}
           height={300}
           data={this.state.cityCrimeLevelResults}>
@@ -100,11 +100,11 @@ class DashboardPage extends React.Component {
           <XAxis dataKey='Date' />
           <YAxis domain={[20000, 40000]}/>
           <Tooltip formatter={(value) => new Intl.NumberFormat('en').format(value)}/>
-          <Area dataKey='Violation_Num' type="monotone" stackId="1" name='Violation' stroke="#8884d8" fill="#8884d8"/>
-          <Area dataKey='Misdemeanor_Num' type="monotone" stackId="1" name='Misdemeanor' stroke="#82ca9d" fill="#82ca9d"/>
-          <Area dataKey='Felony_NUM' type="monotone" stackId="1" name='Felony' stroke="#ffc658" fill="#ffc658"/>
+          <Bar dataKey='Violation_Num' type="monotone" stackId="1" name='Violation' stroke="#8884d8" fill="#8884d8"/>
+          <Bar dataKey='Misdemeanor_Num' type="monotone" stackId="1" name='Misdemeanor' stroke="#82ca9d" fill="#82ca9d"/>
+          <Bar dataKey='Felony_NUM' type="monotone" stackId="1" name='Felony' stroke="#ffc658" fill="#ffc658"/>
           <Legend />
-        </AreaChart>
+        </BarChart>
       </ResponsiveContainer>
 
     </div>
@@ -120,7 +120,7 @@ class DashboardPage extends React.Component {
             data={this.state.cityCrimeAgeResults}>
             <CartesianGrid strokeDasharray='3 3' />
             <XAxis dataKey='Date' />
-            <YAxis tickFormatter={toPercent} domain={[0, 1]}/>
+            <YAxis type="number" tickFormatter={toPercent} domain={[0, 1]} tickCount={3}  />
             <Tooltip formatter={(value) => new Intl.NumberFormat('en').format(value)}/>
             <Bar dataKey='AG1_ratio' type="monotone" stackId="1" name='<18' stroke="#8884d8" fill="#8884d8"/>
             <Bar dataKey='AG2_ratio' type="monotone" stackId="1" name='18-24' stroke="#82ca9d" fill="#82ca9d"/>

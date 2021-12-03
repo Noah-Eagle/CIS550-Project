@@ -270,8 +270,8 @@ async function city_crime_age(req, res) {
     connection.query(`
     With AddTotal AS ( SELECT *, AG1+AG2+AG3+AG4+AG5 As Total
         From NYC_Crime_AgeGroup_Count )
-        SELECT Date, AG1/Total AS AG1_ratio, AG2/Total AS AG2_ratio, AG3/Total AS AG3_ratio, AG4/Total AS AG4_ratio, AG5/Total AS AG5_ratio
-        From AddTotal
+        SELECT Date, AG1/Total- 0.0001 AS AG1_ratio , AG2/Total- 0.0001 AS AG2_ratio, AG3/Total- 0.0001 AS AG3_ratio, AG4/Total- 0.0001 AS AG4_ratio, AG5/Total- 0.0001 AS AG5_ratio
+        From AddTotal        
     `, function (error, results, fields) {
     
         if (error) {
