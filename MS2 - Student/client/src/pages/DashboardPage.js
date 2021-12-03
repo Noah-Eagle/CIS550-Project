@@ -89,7 +89,7 @@ class DashboardPage extends React.Component {
 
     <div style={{ width: '45vw', float: 'left', margin: '0 auto', marginTop: '2vh',  marginLeft: '5vh'}}>
 
-      <h4 style={{textAlign: 'center'}}>NYC Crime Count By Level</h4>
+      <h4 style={{textAlign: 'center'}}>NYC Crime Level Percentage</h4>
 
       <ResponsiveContainer width='100%' aspect={2.5} alignItems='center'>
         <BarChart
@@ -98,11 +98,11 @@ class DashboardPage extends React.Component {
           data={this.state.cityCrimeLevelResults}>
           <CartesianGrid strokeDasharray='3 3' />
           <XAxis dataKey='Date' />
-          <YAxis domain={[20000, 40000]}/>
+          <YAxis domain={[0, 1]} tickFormatter={toPercent}  tickCount={3} />
           <Tooltip formatter={(value) => new Intl.NumberFormat('en').format(value)}/>
-          <Bar dataKey='Violation_Num' type="monotone" stackId="1" name='Violation' stroke="#8884d8" fill="#8884d8"/>
-          <Bar dataKey='Misdemeanor_Num' type="monotone" stackId="1" name='Misdemeanor' stroke="#82ca9d" fill="#82ca9d"/>
-          <Bar dataKey='Felony_NUM' type="monotone" stackId="1" name='Felony' stroke="#ffc658" fill="#ffc658"/>
+          <Bar dataKey='Violation_ratio' type="monotone" stackId="1" name='Violation' stroke="#8884d8" fill="#8884d8"/>
+          <Bar dataKey='Misdemeanor_ratio' type="monotone" stackId="1" name='Misdemeanor' stroke="#82ca9d" fill="#82ca9d"/>
+          <Bar dataKey='Felony_ratio' type="monotone" stackId="1" name='Felony' stroke="#ffc658" fill="#ffc658"/>
           <Legend />
         </BarChart>
       </ResponsiveContainer>

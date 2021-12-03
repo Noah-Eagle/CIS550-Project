@@ -211,7 +211,8 @@ async function city_rents(req, res) {
 
 async function city_crime_level(req, res) {
     connection.query(`
-    SELECT * From NYC_Crime_Level_Count;
+    Select Date, Violation_Num/(Violation_Num+Misdemeanor_Num+Felony_NUM)-0.0001 As Violation_ratio, Misdemeanor_Num/(Violation_Num+Misdemeanor_Num+Felony_NUM)-0.0001 As Misdemeanor_ratio, Felony_Num/(Violation_Num+Misdemeanor_Num+Felony_NUM)-0.0001 As Felony_ratio
+From NYC_Crime_Level_Count;
     `, function (error, results, fields) {
     
         if (error) {
