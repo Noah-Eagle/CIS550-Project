@@ -56,6 +56,13 @@ const getSearchName = async (name) => {
     return res.json()
 }
 
+const getNeighborhood = async (id) => {
+    var res = await fetch(`http://${config.server_host}:${config.server_port}/neighborhood?id=${id}`, {
+        method: 'GET',
+    })
+    return res.json()
+}
+
 // const getAllMatches = async (page, pagesize, league) => {
 //     var res = await fetch(`http://${config.server_host}:${config.server_port}/matches/${league}?page=${page}&pagesize=${pagesize}`, {
 //         method: 'GET',
@@ -109,7 +116,8 @@ export {
     getCityCrimeLevel,
     getCityCrimeAge,
     getFilteredCrime,
-    getSearchName
+    getSearchName,
+    getNeighborhood
     // getAllMatches,
     // getAllPlayers,
     // getMatch,

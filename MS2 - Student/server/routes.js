@@ -228,6 +228,7 @@ From NYC_Crime_Level_Count;
 
 
 async function search_neighborhood(req, res) {
+    
     const name = req.query.name ? `%${req.query.name}%`: "%"
     connection.query(`
     SELECT DISTINCT ZCN.Neighborhood, COUNT(ZCN.ZipCode) as NumZipCodes
@@ -248,16 +249,23 @@ async function search_neighborhood(req, res) {
     });
 }
 
-async function search_neighborhood_id(req, res) {
+async function neighborhood(req, res) {
+    const id = req.query.id ? req.query.id : ""
     const neighborhood = req.query.neighborhood ? `${req.query.neighborhood}`: ""
     connection.query(`
-    WITH CRIME_STAT (Month, Year, Crime_Count) AS (SELECT C.Month, C.Year, COUNT(*) as Crime_Count
-    FROM Crime as C JOIN ZipCodeNeighborhood ZCN on C.ZipCode = ZCN.ZipCode
-    WHERE ZCN.Neighborhood= '${neighborhood}'
-    GROUP BY C.Month,C.Year)
-    SELECT Rent.Neighborhood, Rent.Month, Rent.Year, Rent.AvgRent, Rent.MinRent, Rent.MaxRent, CRIME_STAT.Crime_Count
-    FROM CRIME_STAT JOIN Rent on Rent.Month = CRIME_STAT.Month AND Rent.Year = CRIME_STAT.Year
-    WHERE Rent.Neighborhood ='${neighborhood}';`, function (error, results, fields) {
+    WITH CRIME_STAT (Month, Year, Crime_Count) AS 
+        (SELECT C.Month, C.Year, COUNT(*) as Crime_Count
+         FROM Crime as C JOIN ZipCodeNeighborhood ZCN on C.ZipCode = ZCN.ZipCode
+        WHERE ZCN.Neighborhood= '${id}'
+        GROUP BY C.Month,C.Year),
+    DS AS(
+        SELECT Rent.Neighborhood, Rent.Month, Rent.Year, Rent.AvgRent, Rent.MinRent, Rent.MaxRent, 
+        CRIME_STAT.Crime_Count, Concat(CAST(Rent.Year AS CHAR(4)), '-', CAST(Rent.Month AS CHAR(2)),'-', '01') as datestring
+        FROM CRIME_STAT JOIN Rent on Rent.Month = CRIME_STAT.Month AND Rent.Year = CRIME_STAT.Year
+        WHERE Rent.Neighborhood ='${id}')
+    SELECT *,  str_to_date(datestring, '%Y-%m-%d') as date
+        FROM DS
+        ORDER BY date;`, function (error, results, fields) {
 
         if (error) {
             res.json({ error: error })
@@ -660,7 +668,7 @@ module.exports = {
     city_crime_age,
     crime_filter,
     search_neighborhood,
-    search_neighborhood_id
+    neighborhood
     // jersey,
     // all_matches,
     // all_players,

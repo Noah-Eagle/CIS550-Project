@@ -22,7 +22,7 @@ app.get('/filter/crimes', routes.crime_filter)
 
 app.get('/search', routes.search_neighborhood)
 
-app.get('/search/id', routes.search_neighborhood_id)
+app.get('/neighborhood', routes.neighborhood)
 
 app.get('/city/rents', routes.city_rents)
 
