@@ -84,12 +84,16 @@ class BoroughPage extends React.Component {
     return (
 
       <div>
+
       <MenuBar />
+
+      <img src="/images/brooklyn4k.jpeg" style={{ width: '100vw' }}/>
+
       <div style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }}>
 
         <div style={{ marginTop: '2vh', marginBottom: '2vh' }}>
 
-          <h4>Borough Information</h4>
+          <h4 style={{ fontSize: '40px', marginTop: '5vh', marginBottom: '5vh'}}>Borough Information</h4>
 
         </div>
       
@@ -110,8 +114,8 @@ class BoroughPage extends React.Component {
         </Select>
         </div>
 
-        <div style={{ width: '7vw', float: 'left', marginBottom: '2vh'}}>
-          <Button variant="outline-primary" href="/borough/trends">View Trends</Button>
+        <div style={{ width: '8vw', float: 'left', marginBottom: '2vh'}}>
+          <Button variant="outline-primary" href="/borough/trends">Trends Page</Button>
         </div>
 
         <Divider />
@@ -124,7 +128,7 @@ class BoroughPage extends React.Component {
 
       
 
-    <div style={{ width: '45vw', float: 'left', margin: '0 auto', marginTop: '2vh', marginLeft: '5vh'}}>
+    <div style={{ width: '35vw', float: 'left', margin: '0 auto', marginTop: '2vh', marginLeft: '23vh', paddingBottom: '4vh' }}>
 
       <h4 style={{textAlign: 'center'}}>Average Rent</h4>
 
@@ -145,7 +149,7 @@ class BoroughPage extends React.Component {
     </div>
 
 
-    <div style={{ width: '45vw', float: 'right', margin: '0 auto', marginTop: '2vh', marginRight: '5vh'}}>
+    <div style={{ width: '35vw', float: 'right', margin: '0 auto', marginTop: '2vh', marginRight: '29vh', paddingBottom: '4vh' }}>
 
       <h4 style={{textAlign: 'center'}}>Crime Count</h4>
 
