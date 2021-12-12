@@ -49,9 +49,11 @@ class BoroughTrendsPage extends React.Component {
       <div>
       <MenuBar />
       
+      <img src="/images/park.jpeg" style={{ width: '100vw' }}/>
+
       <div style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }}>
 
-        <h4>Borough Trends</h4>
+        <h4 style={{ fontSize: '40px', marginTop: '5vh', marginBottom: '5vh'}}>Borough Trends</h4>
 
       <div style={{ marginBottom: '2vh' }}>
         <Select defaultValue={'Bronx'} style={{ width: 140 }} onChange={this.boroughOnChange}>
@@ -65,7 +67,7 @@ class BoroughTrendsPage extends React.Component {
     </div>
 
 
-    <div style={{ width: '45vw', float: 'left', margin: '0 auto', marginTop: '2vh', marginLeft: '5vh'}}>
+    <div style={{ width: '45vw', float: 'left', margin: '0 auto', marginTop: '2vh', marginLeft: '5vh', paddingBottom: '4vh' }}>
 
       <h4 style={{textAlign: 'center'}}>Rent Over Time</h4>
 
@@ -86,7 +88,7 @@ class BoroughTrendsPage extends React.Component {
     </div>
 
 
-    <div style={{ width: '45vw', float: 'right', margin: '0 auto', marginTop: '2vh', marginRight: '5vh'}}>
+    <div style={{ width: '45vw', float: 'right', margin: '0 auto', marginTop: '2vh', marginRight: '5vh', paddingBottom: '4vh' }}>
 
       <h4 style={{textAlign: 'center'}}>Crime Count Over Time</h4>
 
