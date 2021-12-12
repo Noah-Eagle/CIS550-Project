@@ -24,6 +24,8 @@ app.get('/search', routes.search_neighborhood)
 
 app.get('/neighborhood', routes.neighborhood)
 
+app.get('/neighborhood/rank', routes.neighborhood_rank)
+
 app.get('/city/rents', routes.city_rents)
 
 app.get('/city/crimelevel', routes.city_crime_level)

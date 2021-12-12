@@ -7,7 +7,7 @@ import {
   Col
 } from 'antd';
 import MenuBar from '../components/MenuBar';
-import { getSearchName, getNeighborhood } from '../fetcher';
+import { getSearchName, getNeighborhood, getNeighborhoodRank } from '../fetcher';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Button } from "shards-react";
 import { Form, FormInput, FormGroup, Card, CardBody, CardTitle, Progress } from "shards-react";
@@ -61,6 +61,44 @@ const SelectedSummaryColumns = [
   }
 ];
 
+const RankColumns = [
+  {
+    title: 'Neighborhood',
+    dataIndex: 'Neighborhood',
+    key: 'Neighborhood'
+  },
+  {
+    title: 'Crime Rank In Borough',
+    dataIndex: 'TRank',
+    key: 'TRank'
+  },
+  {
+    title: 'Felony Rank In Borough',
+    dataIndex: 'FRank',
+    key: 'FRank'
+  },
+  {
+    title: 'Misdemeanor Rank In Borough',
+    dataIndex: 'MRank',
+    key: 'MRank'
+  },
+  {
+    title: 'Rent Rank In Borough',
+    dataIndex: 'RentRank',
+    key: 'RentRank'
+  },
+  {
+    title: 'Most Common Felony',
+    dataIndex: 'FMOST',
+    key: 'FMOST'
+  },
+  {
+    title: 'Most Common Misdemeanor',
+    dataIndex: 'MMOST',
+    key: 'MMOST',
+  }
+];
+
 class SearchPage extends React.Component {
 
   constructor(props) {
@@ -70,7 +108,8 @@ class SearchPage extends React.Component {
       nameQuery: '',
       neighborhoodResults: [],
       selectedNeighborhoodId: window.location.search ? window.location.search.substring(1).split('=')[1] : null,
-      selectedNeighborhoodDetails: []
+      selectedNeighborhoodDetails: [],
+      selectedNeighborhoodRanks : []
     }
     this.updateSearchResults = this.updateSearchResults.bind(this)
     this.handleNameQueryChange = this.handleNameQueryChange.bind(this)
@@ -98,10 +137,12 @@ componentDidMount() {
 })
   if (this.state.selectedNeighborhoodId)
   {
-  getNeighborhood(this.state.selectedNeighborhoodId).then(res =>{
-    this.setState({ selectedNeighborhoodDetails: res.results})
-    
-})
+    getNeighborhoodRank(this.state.selectedNeighborhoodId).then(res =>{
+      this.setState({selectedNeighborhoodRanks: res.results})
+    })
+    getNeighborhood(this.state.selectedNeighborhoodId).then(res =>{
+      this.setState({ selectedNeighborhoodDetails: res.results})  
+    })
   }
 }
 
@@ -130,8 +171,8 @@ componentDidMount() {
           </div>
           <div style={{margin: '0 auto', marginTop: '2vh', marginLeft: '5vh'}}>
 
-<h4 style={{textAlign: 'center'}}>Rent and Crime Over Time</h4>
-
+<h4 style={{textAlign: 'center'}}>{this.state.selectedNeighborhoodId ? decodeURI(this.state.selectedNeighborhoodId) : ""}: Rent and Crime Over Time </h4>
+<Card loading = {true}>
 <ResponsiveContainer width='100%' aspect={2.5}>
   <LineChart
     width={500}
@@ -148,6 +189,10 @@ componentDidMount() {
     <Line yAxisId="right" dataKey='Crime_Count' name='Crime Count' fill='#00FF00' />
   </LineChart>
 </ResponsiveContainer>
+</Card>
+<Divider >
+       <Table dataSource={this.state.selectedNeighborhoodRanks} columns={RankColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }} style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }}/>
+</Divider>
 
 </div>
           {/* {this.state.selectedNeighborhoodDetails ? <div style={{ width: '45vw', float: 'left', margin: '0 auto', marginTop: '2vh', marginLeft: '5vh'}}> */}

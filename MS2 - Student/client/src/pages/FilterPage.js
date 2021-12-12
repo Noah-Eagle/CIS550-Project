@@ -25,7 +25,8 @@ const rentColumns = [
       title: 'Neighborhood',
       dataIndex: 'Neighborhood',
       key: 'Neighborhood',
-      sorter: (a, b) => a.Neighborhood.localeCompare(b.Neighborhood)
+      sorter: (a, b) => a.Neighborhood.localeCompare(b.Neighborhood),
+      render: (text, row) => <a href={`/search?id=${row.Neighborhood}`}>{text}</a>
     },
     {
         title: 'Average Rent',
@@ -60,6 +61,7 @@ const crimeColumns = [
       dataIndex: 'Neighborhood',
       key: 'Neighborhood',
       sorter: (a, b) => a.Neighborhood.localeCompare(b.Neighborhood),
+      render: (text, row) => <a href={`/search?id=${row.Neighborhood}`}>{text}</a>
     },
     {
         title: 'Offense Count',

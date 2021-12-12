@@ -251,7 +251,6 @@ async function search_neighborhood(req, res) {
 
 async function neighborhood(req, res) {
     const id = req.query.id ? req.query.id : ""
-    const neighborhood = req.query.neighborhood ? `${req.query.neighborhood}`: ""
     connection.query(`
     WITH CRIME_STAT (Month, Year, Crime_Count) AS 
         (SELECT C.Month, C.Year, COUNT(*) as Crime_Count
@@ -266,6 +265,51 @@ async function neighborhood(req, res) {
     SELECT *,  str_to_date(datestring, '%Y-%m-%d') as date
         FROM DS
         ORDER BY date;`, function (error, results, fields) {
+
+        if (error) {
+            res.json({ error: error })
+        } else if (results) {
+            res.json({ results: results })
+        }
+    });
+}
+
+async function neighborhood_rank(req, res) {
+    const id = req.query.id ? req.query.id : ""
+    connection.query(`
+    WITH IDC AS (SELECT ZCN.Neighborhood, TC.OffenseDescription, COUNT(IF (TC.OffenseLevel = 'Felony', 1, NULL)) AS FCOUNT,  COUNT(IF (TC.OffenseLevel = 'Misdemeanor', 1, NULL)) AS MCOUNT, COUNT(*) as TCOUNT
+    FROM 2020Crimes TC JOIN ZipCodeNeighborhood ZCN on TC.ZipCode = ZCN.ZipCode
+    WHERE ZCN.Neighborhood = '${id}'
+    GROUP BY (TC.OffenseDescription)),
+    FMOST AS (SELECT Neighborhood, OffenseDescription AS FMOST
+    FROM IDC
+    WHERE IDC.FCOUNT >= ALL(SELECT FCOUNT FROM IDC)),
+        MMOST AS(
+    SELECT Neighborhood, OffenseDescription AS MMOST
+    FROM IDC
+    WHERE IDC.MCOUNT >= ALL(SELECT MCOUNT FROM IDC)),
+    NB AS (SELECT *
+    From NeighborhoodBorough
+    WHERE Neighborhood = '${id}'),
+    NBS AS (SELECT NB2.Neighborhood, NB2.Borough
+    FROM NeighborhoodBorough NB2, NB
+    WHERE NB.Borough = NB2.Borough),
+    NBR AS(SELECT R.Neighborhood, AVG(R.AvgRent) as AvgRent
+        FROM Rent R
+        WHERE Year = 2020
+        GROUP BY R.Neighborhood),
+    NBSZ AS( SELECT ZCN.ZipCode, NBS.Neighborhood, NBS.Borough
+    FROM ZipCodeNeighborhood ZCN JOIN NBS on ZCN.Neighborhood=NBS.Neighborhood),
+    Counts AS(
+    SELECT NBSZ.Neighborhood, COUNT(TC.CrimeId) AS Total, COUNT(IF (TC.OffenseLevel = 'Felony', 1, NULL)) AS Felonies,
+        COUNT(IF (TC.OffenseLevel = 'Misdemeanor', 1, NULL)) as Misdemeanors, NBR.AvgRent, NBSZ.Borough
+    FROM 2020Crimes TC JOIN NBSZ ON NBSZ.ZipCode = TC.ZipCode JOIN NBR ON NBSZ.Neighborhood = NBR.Neighborhood
+    GROUP BY NBSZ.Neighborhood),
+    NBRank as (
+    SELECT Counts.Borough, Counts.Neighborhood, RANK() OVER (ORDER BY Counts.Total DESC) AS TRank ,  RANK() OVER (ORDER BY Counts.Felonies DESC) AS FRank , RANK() OVER (ORDER BY Counts.Misdemeanors DESC) AS MRank,  RANK() OVER (ORDER BY Counts.AvgRent DESC) as RentRank
+    FROM Counts)
+    SELECT *
+    FROM NBRank NATURAL JOIN FMOST NATURAL Join MMOST;`, function (error, results, fields) {
 
         if (error) {
             res.json({ error: error })
@@ -668,7 +712,8 @@ module.exports = {
     city_crime_age,
     crime_filter,
     search_neighborhood,
-    neighborhood
+    neighborhood,
+    neighborhood_rank
     // jersey,
     // all_matches,
     // all_players,
