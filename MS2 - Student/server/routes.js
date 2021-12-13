@@ -231,6 +231,7 @@ async function search_neighborhood(req, res) {
     
     const name = req.query.name ? `%${req.query.name}%`: "%"
     connection.query(`
+    WITH NB AS (
     SELECT DISTINCT ZCN.Neighborhood, COUNT(ZCN.ZipCode) as NumZipCodes
     FROM ZipCodeNeighborhood as ZCN
     WHERE ZCN.Neighborhood LIKE '${name}'
@@ -239,6 +240,14 @@ async function search_neighborhood(req, res) {
     SELECT DISTINCT ZCN.Neighborhood, COUNT(ZCN.ZipCode) as NumZipCodes
     FROM ZipCodeNeighborhood as ZCN
     WHERE ZCN.ZipCode like '${name}'
+    GROUP BY ZCN.Neighborhood
+    UNION
+    SELECT DISTINCT ZCN.Neighborhood, COUNT(ZCN.ZipCode) as NumZipCodes
+    FROM ZipCodeNeighborhood as ZCN Join NeighborhoodBorough NB on ZCN.Neighborhood = NB.Neighborhood
+    WHERE NB.Borough like '${name}'
+    GROUP BY ZCN.Neighborhood)
+    SELECT NB.Neighborhood, NB.NumZipCodes, GROUP_CONCAT(ZCN.ZipCode ORDER BY ZCN.ZipCode SEPARATOR  ', ') as ZipCodes
+    FROM NB JOIN ZipCodeNeighborhood ZCN on NB.Neighborhood = ZCN.Neighborhood
     GROUP BY ZCN.Neighborhood;`, function (error, results, fields) {
 
         if (error) {
@@ -252,10 +261,12 @@ async function search_neighborhood(req, res) {
 async function neighborhood(req, res) {
     const id = req.query.id ? req.query.id : ""
     connection.query(`
-    WITH CRIME_STAT (Month, Year, Crime_Count) AS 
-        (SELECT C.Month, C.Year, COUNT(*) as Crime_Count
-         FROM Crime as C JOIN ZipCodeNeighborhood ZCN on C.ZipCode = ZCN.ZipCode
-        WHERE ZCN.Neighborhood= '${id}'
+    WITH CRIME_STAT 
+    (Month, Year, Crime_Count) AS 
+        (SELECT C.Month, C.Year, COUNT(C.ZipCode) as Crime_Count
+        FROM Crime as C JOIN ( SELECT ZipCode
+                               FROM ZipCodeNeighborhood ZCN
+                             WHERE ZCN.Neighborhood= '${id}') zip on zip.ZipCode = C.ZipCode
         GROUP BY C.Month,C.Year),
     DS AS(
         SELECT Rent.Neighborhood, Rent.Month, Rent.Year, Rent.AvgRent, Rent.MinRent, Rent.MaxRent, 

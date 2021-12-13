@@ -212,19 +212,19 @@ class FilterPage extends React.Component {
 
         <img src="/images/NightSkyline.jpg" style = {{width: '100vw', height: '35vw'}}/>
 
-        <div style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }}>
+        <div style={{ width: '70vw', margin: '0 auto', marginTop: '2vh', paddingBottom: '4vh' }}>
 
-            <h4 style = {{fontSize: '40px', marginTop: '5vh', marginBottotm: '1vh', marginLeft: '22vw'}}>Rent Filtering</h4>
+            <h4 style = {{fontSize: '40px', marginTop: '5vh', marginBottotm: '1vh', textAlign: 'center' }}>Rent Filtering</h4>
 
-                <Form style={{ width: '80vw', margin: '0 auto', marginTop: '4vh' }}>
+                <Form style={{ width: '70vw', margin: '0 auto', marginTop: '4vh' }}>
                     <Row>
-                        <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
+                        <Col><FormGroup style={{ width: '15vw', margin: '0 auto' }}>
                             <FormInput placeholder="Minimum Rent" onChange={this.handleMinRentChange} />
                         </FormGroup></Col>
-                        <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
+                        <Col><FormGroup style={{ width: '15vw', margin: '0 auto', marginLeft: '13vw' }}>
                             <FormInput placeholder="Maximum Rent" onChange={this.handleMaxRentChange} />
                         </FormGroup></Col>
-                        <Col flex={2}><FormGroup style={{ width: '10vw' }}>
+                        <Col><FormGroup style={{ width: '0vw', margin: '0 auto', marginLeft: '22vw' }}>
                             <Button style={{ marginTop: '0vh' }} onClick={this.updateRentSearchResults}>Search</Button>
                         </FormGroup></Col>
                     </Row>
@@ -236,19 +236,19 @@ class FilterPage extends React.Component {
 
             <Divider />
 
-            <h4 style = {{fontSize: '40px', marginTop: '5vh', marginBottotm: '1vh', marginLeft: '22vw'}}>Crime Filtering</h4>
+            <h4 style = {{fontSize: '40px', marginTop: '5vh', marginBottotm: '1vh', textAlign: 'center' }}>Crime Filtering</h4>
 
-            <Form style={{ width: '80vw', margin: '0 auto', marginTop: '5vh' }}>
+            <Form style={{ width: '80vw', margin: '0 auto', marginTop: '5vh', marginLeft: '9vw' }}>
                     <Row style={{marginBottom: 8, marginLeft: '10vw', marginRight: '25vw'}}>
                         <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
-                            <Select defaultValue="Felony" style={{ width: '15vw' }} onChange={this.handleOffenseChange}>
+                            <Select defaultValue="Felony" style={{ width: '10.5vw' }} onChange={this.handleOffenseChange}>
                                 <Option value="Felony">Felony</Option>
                                 <Option value="Misdemeanor">Misdemeanor</Option>
                                 <Option value="Violation">Violation</Option>
                             </Select>
                         </FormGroup></Col>
                         <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
-                        <Select defaultValue={1} style={{ width: 120 }} onChange={this.handleOffenseLimitChange}>
+                        <Select defaultValue={1} style={{ width: '6.5vw' }} onChange={this.handleOffenseLimitChange}>
                             <Option value={1}>Top 1</Option>
                             <Option value={5}>Top 5</Option>
                             <Option value={10}>Top 10</Option>
@@ -258,13 +258,13 @@ class FilterPage extends React.Component {
                     </Row>
                     <Row style={{marginBottom: 8, marginLeft: '10vw', marginRight: '25vw'}}>
                         <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
-                            <Select defaultValue="M" style={{ width: '15vw' }} onChange={this.handleGenderChange}>
+                            <Select defaultValue="M" style={{ width: '10.5vw' }} onChange={this.handleGenderChange}>
                                 <Option value="M">Male</Option>
                                 <Option value="F">Female</Option>
                             </Select>
                         </FormGroup></Col>
                         <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
-                        <Select defaultValue={1} style={{ width: 120 }} onChange={this.handleGenderLimitChange}>
+                        <Select defaultValue={1} style={{ width: '6.5vw' }} onChange={this.handleGenderLimitChange}>
                             <Option value={1}>Top 1</Option>
                             <Option value={5}>Top 5</Option>
                             <Option value={10}>Top 10</Option>
@@ -274,7 +274,7 @@ class FilterPage extends React.Component {
                     </Row>
                     <Row style={{marginBottom: 8, marginLeft: '10vw', marginRight: '25vw'}}>
                         <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
-                            <Select defaultValue="%3C18" style={{ width: '15vw' }} onChange={this.handleAgeRangeChange}>
+                            <Select defaultValue="%3C18" style={{ width: '10.5vw' }} onChange={this.handleAgeRangeChange}>
                                 <Option value="%3C18">Under 18</Option>
                                 <Option value="18%2D24">18-24</Option>
                                 <Option value="25%2D44">25-44</Option>
@@ -283,7 +283,7 @@ class FilterPage extends React.Component {
                             </Select>
                             </FormGroup></Col>
                             <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
-                            <Select defaultValue={1} style={{ width: 120 }} onChange={this.handleAgeLimitChange}>
+                            <Select defaultValue={1} style={{ width: '6.5vw' }} onChange={this.handleAgeLimitChange}>
                             <Option value={1}>Top 1</Option>
                             <Option value={5}>Top 5</Option>
                             <Option value={10}>Top 10</Option>
@@ -291,7 +291,7 @@ class FilterPage extends React.Component {
                         </Select>
                         </FormGroup></Col>
                     </Row>
-                    <Row style = {{marginLeft: '10vw', marginRight: '25vw'}}>
+                    <Row style = {{marginTop: '2vw', marginLeft: '10vw', marginRight: '25vw'}}>
                         <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
                             <Radio.Group
                             options={
