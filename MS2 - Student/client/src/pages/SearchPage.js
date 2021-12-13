@@ -11,7 +11,8 @@ import { getSearchName, getNeighborhood, getNeighborhoodRank } from '../fetcher'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Button } from "shards-react";
 import { Form, FormInput, FormGroup, Card, CardBody, CardTitle, Progress } from "shards-react";
-
+var moment = require('moment'); // require
+moment().format(); 
 
 
 const { Option } = Select;
@@ -124,6 +125,21 @@ class SearchPage extends React.Component {
 
   }
 
+getMax(data)
+{
+  var max = 0
+  if (data)
+  {
+    for (var i = 0; i < data.length; i++)
+    {
+      max = Math.max(data[i]['AvgRent'], max)
+    }
+  }
+  console.log(data)
+  console.log(max)
+  return max
+}
+
 handleNameQueryChange(event) {
   this.setState({ nameQuery: event.target.value })
 }
@@ -185,13 +201,13 @@ componentDidMount() {
     data={this.state.selectedNeighborhoodDetails}
   >
     <CartesianGrid strokeDasharray='3 3' />
-    <XAxis dataKey="date" tick={false} />
-    <YAxis yAxisId="left" domain={['dataMin - 100', 'dataMax + 100']} />
-    <YAxis yAxisId="right" orientation="right" domain={['dataMin - 100', 'dataMax + 100']} />
+    <XAxis dataKey="date" name= "Date"  tickFormatter = {(value) => moment.utc(value).format("MM/YY")}/>
+    <YAxis yAxisId="left" domain={[0, 'dataMax + 100']} />
+    <YAxis yAxisId="right" orientation="right" domain={[0, this.getMax(this.state.selectedNeighborhoodDetails) + 100]} />
     <Legend />
-    <Tooltip formatter={(value, name) => (name == "Average Rent") ? new Intl.NumberFormat('en', { style: 'currency', currency: 'USD' }).format(value): value}/>
-    <Line yAxisId="left" dataKey='AvgRent' name='Average Rent' fill='#007bff' />
-    <Line yAxisId="right" dataKey='Crime_Count' name='Crime Count' fill='#00FF00' />
+    <Tooltip formatter={(value, name) => (name == "Average Rent") ? new Intl.NumberFormat('en', { style: 'currency', currency: 'USD' }).format(value): (name == "Date") ? moment.utc(value).format("MM/YY"): value  }/>
+    <Line yAxisId="left" dataKey='AvgRent' name='Average Rent' stroke='#007bff' />
+    <Line yAxisId="right" dataKey='Crime_Count' name='Crime Count' stroke='#00FF00' />
   </LineChart>
 </ResponsiveContainer>
 <div>
