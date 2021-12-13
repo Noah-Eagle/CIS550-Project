@@ -57,13 +57,15 @@ class DashboardPage extends React.Component {
 
     return (
 
-      <div style={{background: "url(../images/nyc-dashboard-background.jpg)"}}>
+      <div>
       
       <MenuBar />      
+
+      <img src="/images/nyc-dashboard-background.jpg" style={{ width: '100vw' }}/>
       
       <div style={{ width: '50vw', float: 'left', margin: '0 auto', marginTop: '2vh', marginLeft: '45vh'}}>
 
-      <h3 style={{textAlign: 'center', textDecoration: 'underline'  }}>NYC Rental Market and Crime Situation Overview</h3>
+      <h4 style={{textAlign: 'center', fontSize: '40px', marginTop: '5vh', marginBottom: '5vh' }}>NYC Rental Market and Crime Situation Overview</h4>
 
       <h4 style={{textAlign: 'center'}}>NYC Average Rent</h4>
 
