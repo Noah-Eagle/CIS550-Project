@@ -32,7 +32,7 @@ const NeighborhoodhSummaryColumns = [
     sorter: (a, b) => a.NumZipCodes - b.NumZipCodes
   },
   {
-    title: 'Zipcodes',
+    title: 'Zip Codes',
     dataIndex: 'ZipCodes',
     key: 'ZipCodes',
     sorter: (a, b) => a.Neighborhood.localeCompare(b.Neighborhood),
