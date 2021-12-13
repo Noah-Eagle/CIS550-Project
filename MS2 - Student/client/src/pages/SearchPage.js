@@ -75,7 +75,7 @@ const RankColumns = [
     key: 'Neighborhood'
   },
   {
-    title: 'Crime Rank In Borough',
+    title: 'Overall Crime Rank In Borough',
     dataIndex: 'TRank',
     key: 'TRank'
   },
@@ -170,32 +170,41 @@ componentDidMount() {
 
   render() {
     return (
+    <div style={{ paddingBottom: '4vh' }}>
       <div>
           <MenuBar />
-          <Form style={{ width: '80vw', margin: '0 auto', marginTop: '5vh' }}>
+
+          <img src="/images/dumbo.jpeg" style = {{ width: '100vw' }}/>
+          <h4 style = {{fontSize: '40px', marginTop: '5vh', marginBottotm: '1vh', textAlign: 'center' }}>Neighborhood Search</h4>
+
+          <Form style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
               <Row>
-                  <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
-                      <label>Name</label>
-                      <FormInput placeholder="Name" value={this.state.nameQuery} onChange={this.handleNameQueryChange} />
+                  <Col><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
+
+                      <FormInput style={{ marginTop: '2vh' }} placeholder="Search by Neighborhood, Zip Code, or Borough" value={this.state.nameQuery} onChange={this.handleNameQueryChange} />
                   </FormGroup></Col>
-                  <Col flex={2}><FormGroup style={{ width: '10vw' }}>
-                      <Button style={{ marginTop: '4vh' }} onClick={this.updateSearchResults}>Search</Button>
+                  <Col><FormGroup style={{ width: '10vw' }}>
+                      <Button style={{ marginTop: '2vh', marginLeft: '3vw' }} onClick={this.updateSearchResults}>Search</Button>
                   </FormGroup></Col>
               </Row>
               <br></br>     
           </Form>
           <Divider />
-          <Table dataSource={this.state.neighborhoodResults} columns={NeighborhoodhSummaryColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }} style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }}/>
+          <Table dataSource={this.state.neighborhoodResults} columns={NeighborhoodhSummaryColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }} style={{ width: '70vw', margin: '0 auto', marginTop: '4vh' }}/>
           <Divider />
           <div>
           {/* <Table dataSource={this.state.selectedNeighborhoodDetails} columns={SelectedSummaryColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }} style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }}/> */}
           
           </div>
-          <div style={{margin: '0 auto', marginTop: '2vh', marginLeft: '5vh'}}>
+          <div style={{margin: '0 auto', marginTop: '2vh', marginBottom: '2vh', marginLeft: '5vh'}}>
 <div>
-  <Table dataSource={this.state.selectedNeighborhoodRanks} columns={RankColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }} style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }}/>
+  <h4 style={{ textAlign: 'center', marginTop: '3vh', marginBottom: '3vh' }}>Neighborhood Rankings </h4>
+  <h6 style={{ textAlign: 'center' }}>1 = highest number of crimes / most expensive rents</h6>
+  <Table dataSource={this.state.selectedNeighborhoodRanks} columns={RankColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }} style={{ width: '70vw', margin: '0 auto', marginTop: '4vh', marginBottom: '2vh' }}/>
 </div>
-<h4 style={{textAlign: 'center'}}>{this.state.selectedNeighborhoodId ? decodeURI(this.state.selectedNeighborhoodId) : ""}: Rent and Crime Over Time </h4>
+
+<h4 style={{textAlign: 'center', marginBottom: '1vh' }}>{this.state.selectedNeighborhoodId ? decodeURI(this.state.selectedNeighborhoodId) : ""}</h4>
+<h4 style={{textAlign: 'center', marginBottom: '3vh' }}>Rent and Crime Over Time </h4>
 <ResponsiveContainer width='100%' aspect={2.5}>
   <LineChart
     width={500}
@@ -232,6 +241,7 @@ componentDidMount() {
             {/* </div> : null} */}
         
         </div>
+  </div>
   )
 }
 }
