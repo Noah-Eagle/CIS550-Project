@@ -273,7 +273,7 @@ async function neighborhood(req, res) {
     DS AS (
     SELECT Rent.Neighborhood, Rent.Month, Rent.Year, Rent.AvgRent, Rent.MinRent, Rent.MaxRent, 
     CRIME_STAT.Crime_Count, Concat(CAST(Rent.Year AS CHAR(4)), '-', CAST(Rent.Month AS CHAR(2)),'-', '01') as datestring
-    FROM CRIME_STAT RIGHT JOIN Rent on Rent.Month = CRIME_STAT.Month AND Rent.Year = CRIME_STAT.Year
+    FROM CRIME_STAT RIGHT JOIN Rent ON Rent.Month = CRIME_STAT.Month AND Rent.Year = CRIME_STAT.Year
     WHERE Rent.Neighborhood ='${id}'
     )
     SELECT *,  str_to_date(datestring, '%Y-%m-%d') as date
