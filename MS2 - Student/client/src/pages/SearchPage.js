@@ -215,10 +215,10 @@ componentDidMount() {
     <XAxis dataKey="date" name= "Date"  tickFormatter = {(value) => moment.utc(value).format("MM/YY")}/>
     <YAxis yAxisId="left" domain={[0, 'dataMax + 100']} />
     <YAxis yAxisId="right" orientation="right" domain={[0, this.getMax(this.state.selectedNeighborhoodDetails) + 100]} />
-    <Legend />
+    <Legend wrapperStyle={{ position: 'relative' }}/>
     <Tooltip formatter={(value, name) => (name == "Average Rent") ? new Intl.NumberFormat('en', { style: 'currency', currency: 'USD' }).format(value): (name == "Date") ? moment.utc(value).format("MM/YY"): value  }/>
     <Line yAxisId="left" dataKey='AvgRent' name='Average Rent' stroke='#007bff' />
-    <Line yAxisId="right" dataKey='Crime_Count' name='Crime Count' stroke='#00FF00' />
+    <Line yAxisId="right" dataKey='Crime_Count' name='Crime Count' stroke='#FF0000' />
   </LineChart>
 </ResponsiveContainer>
 
