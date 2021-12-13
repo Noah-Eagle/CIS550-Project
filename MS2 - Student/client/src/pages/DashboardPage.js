@@ -57,17 +57,17 @@ class DashboardPage extends React.Component {
 
     return (
 
-      <div>
+      <div style={{ paddingBottom: '4vh' }}>
       
       <MenuBar />      
 
       <img src="/images/nyc-dashboard-background.jpg" style={{ width: '100vw' }}/>
       
-      <div style={{ width: '50vw', float: 'left', margin: '0 auto', marginTop: '2vh', marginLeft: '45vh'}}>
+      <div style={{ width: '70vw', margin: '0 auto', marginTop: '2vh', marginBottom: '5vh'}}>
 
-      <h4 style={{textAlign: 'center', fontSize: '40px', marginTop: '5vh', marginBottom: '5vh' }}>NYC Rental Market and Crime Situation Overview</h4>
+      <h4 style={{textAlign: 'center', fontSize: '40px', marginTop: '5vh', marginBottom: '5vh' }}>NYC Rental Market and Crime Overview</h4>
 
-      <h4 style={{textAlign: 'center'}}>NYC Average Rent</h4>
+      <h4 style={{textAlign: 'center'}}>Average Rent Over Time</h4>
 
       <ResponsiveContainer width='100%' aspect={2.5} alignItems='center'>
         <AreaChart
@@ -89,9 +89,9 @@ class DashboardPage extends React.Component {
     
     {/*<h3 style={{textAlign: 'center', textDecoration: 'underline'  }}>NYC Crime Situation Overview</h3>*/}
 
-    <div style={{ width: '45vw', float: 'left', margin: '0 auto', marginTop: '2vh',  marginLeft: '5vh'}}>
+    <div style={{ width: '70vw', margin: '0 auto' }}>
 
-      <h4 style={{textAlign: 'center'}}>NYC Crime Level Percentage</h4>
+      <h4 style={{textAlign: 'center'}}>Offense Level Proportions Over Time</h4>
 
       <ResponsiveContainer width='100%' aspect={2.5} alignItems='center'>
         <BarChart
@@ -105,15 +105,15 @@ class DashboardPage extends React.Component {
           <Bar dataKey='Violation_ratio' type="monotone" stackId="1" name='Violation' stroke="#8884d8" fill="#8884d8"/>
           <Bar dataKey='Misdemeanor_ratio' type="monotone" stackId="1" name='Misdemeanor' stroke="#82ca9d" fill="#82ca9d"/>
           <Bar dataKey='Felony_ratio' type="monotone" stackId="1" name='Felony' stroke="#ffc658" fill="#ffc658"/>
-          <Legend />
+          <Legend wrapperStyle={{ position: 'relative' }}/>
         </BarChart>
       </ResponsiveContainer>
 
     </div>
 
-    <div style={{ width: '45vw', float: 'left', margin: '0 auto', marginTop: '2vh',  marginLeft: '5vh'}}> 
+    <div style={{ width: '70vw', margin: '0 auto', marginTop: '7vh' }}> 
 
-        <h4 style={{textAlign: 'center'}}>NYC Crime Age Group Percentage</h4>
+        <h4 style={{textAlign: 'center'}}>Age Group Victimization Proportions Over Time</h4>
         
         <ResponsiveContainer width='100%' aspect={2.5} alignItems='center'>
         <BarChart
@@ -129,7 +129,7 @@ class DashboardPage extends React.Component {
             <Bar dataKey='AG3_ratio' type="monotone" stackId="1" name='25-44' stroke="#ffc658" fill="#ffc658"/>
             <Bar dataKey='AG4_ratio' type="monotone" stackId="1" name='45-64' stroke="#FF5733" fill="#FF5733"/>
             <Bar dataKey='AG5_ratio' type="monotone" stackId="1" name='65+' stroke="#C70039" fill="#C70039"/>
-            <Legend />
+            <Legend wrapperStyle={{ position: 'relative' }}/>
         </BarChart>
         </ResponsiveContainer>
 
