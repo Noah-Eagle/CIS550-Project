@@ -114,7 +114,7 @@ class BoroughPage extends React.Component {
         </Select>
         </div>
 
-        <div style={{ width: '8vw', float: 'left', marginBottom: '2vh'}}>
+        <div style={{ width: '8vw', float: 'left', marginBottom: '2vh', marginLeft: '4vh' }}>
           <Button variant="outline-primary" href="/borough/trends">Trends Page</Button>
         </div>
 
@@ -126,9 +126,9 @@ class BoroughPage extends React.Component {
 
       </div>
 
-      
+    <div style={{ width: '70vw', margin: '0 auto', marginTop: '4vh' }}>  
 
-    <div style={{ width: '35vw', float: 'left', margin: '0 auto', marginTop: '2vh', marginLeft: '23vh', paddingBottom: '4vh' }}>
+    <div style={{ width: '33vw', float: 'left', margin: '0 auto', paddingBottom: '4vh' }}>
 
       <h4 style={{textAlign: 'center'}}>Average Rent</h4>
 
@@ -149,7 +149,7 @@ class BoroughPage extends React.Component {
     </div>
 
 
-    <div style={{ width: '35vw', float: 'right', margin: '0 auto', marginTop: '2vh', marginRight: '29vh', paddingBottom: '4vh' }}>
+    <div style={{ width: '33vw', float: 'right', margin: '0 auto', paddingBottom: '4vh' }}>
 
       <h4 style={{textAlign: 'center'}}>Crime Count</h4>
 
@@ -169,7 +169,7 @@ class BoroughPage extends React.Component {
 
     </div>
 
-
+    </div>
 
   </div>
 
