@@ -4,6 +4,7 @@ import {
   Select,
   Divider
 } from 'antd';
+import Image from 'react';
 import MenuBar from '../components/MenuBar';
 import { getBoroughSummary, getCityRents, getCityCrimeLevel, getCityCrimeAge} from '../fetcher';
 //import {  } from '../fetcher';
@@ -56,14 +57,15 @@ class DashboardPage extends React.Component {
 
     return (
 
-      <div >
-      <MenuBar />
-    
-    
+      <div>
+      
+      <MenuBar />      
 
+      <img src="/images/nyc-dashboard-background.jpg" style={{ width: '100vw' }}/>
+      
       <div style={{ width: '50vw', float: 'left', margin: '0 auto', marginTop: '2vh', marginLeft: '45vh'}}>
 
-      <h3 style={{textAlign: 'center', textDecoration: 'underline'  }}>NYC Rental Market Overview</h3>
+      <h4 style={{textAlign: 'center', fontSize: '40px', marginTop: '5vh', marginBottom: '5vh' }}>NYC Rental Market and Crime Situation Overview</h4>
 
       <h4 style={{textAlign: 'center'}}>NYC Average Rent</h4>
 
@@ -83,9 +85,9 @@ class DashboardPage extends React.Component {
       
     </div>
 
-    <Divider />
     
-    <h3 style={{textAlign: 'center', textDecoration: 'underline'  }}>NYC Crime Situation Overview</h3>
+    
+    {/*<h3 style={{textAlign: 'center', textDecoration: 'underline'  }}>NYC Crime Situation Overview</h3>*/}
 
     <div style={{ width: '45vw', float: 'left', margin: '0 auto', marginTop: '2vh',  marginLeft: '5vh'}}>
 
@@ -109,10 +111,10 @@ class DashboardPage extends React.Component {
 
     </div>
 
-    <div style={{ width: '45vw', float: 'left', margin: '0 auto', marginTop: '2vh',  marginLeft: '5vh'}}>
+    <div style={{ width: '45vw', float: 'left', margin: '0 auto', marginTop: '2vh',  marginLeft: '5vh'}}> 
 
         <h4 style={{textAlign: 'center'}}>NYC Crime Age Group Percentage</h4>
-
+        
         <ResponsiveContainer width='100%' aspect={2.5} alignItems='center'>
         <BarChart
             width={500}
@@ -133,8 +135,8 @@ class DashboardPage extends React.Component {
 
     </div>
 
-
-
+    
+<Divider />
   </div>
 
     )

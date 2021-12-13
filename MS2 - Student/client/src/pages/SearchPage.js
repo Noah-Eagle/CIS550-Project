@@ -33,7 +33,7 @@ const NeighborhoodhSummaryColumns = [
     sorter: (a, b) => a.NumZipCodes - b.NumZipCodes
   },
   {
-    title: 'Zipcodes',
+    title: 'Zip Codes',
     dataIndex: 'ZipCodes',
     key: 'ZipCodes',
     sorter: (a, b) => a.Neighborhood.localeCompare(b.Neighborhood),
@@ -192,7 +192,9 @@ componentDidMount() {
           
           </div>
           <div style={{margin: '0 auto', marginTop: '2vh', marginLeft: '5vh'}}>
-
+<div>
+  <Table dataSource={this.state.selectedNeighborhoodRanks} columns={RankColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }} style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }}/>
+</div>
 <h4 style={{textAlign: 'center'}}>{this.state.selectedNeighborhoodId ? decodeURI(this.state.selectedNeighborhoodId) : ""}: Rent and Crime Over Time </h4>
 <ResponsiveContainer width='100%' aspect={2.5}>
   <LineChart
@@ -210,9 +212,6 @@ componentDidMount() {
     <Line yAxisId="right" dataKey='Crime_Count' name='Crime Count' stroke='#00FF00' />
   </LineChart>
 </ResponsiveContainer>
-<div>
-       <Table dataSource={this.state.selectedNeighborhoodRanks} columns={RankColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }} style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }}/>
-</div>
 
 </div>
           {/* {this.state.selectedNeighborhoodDetails ? <div style={{ width: '45vw', float: 'left', margin: '0 auto', marginTop: '2vh', marginLeft: '5vh'}}> */}

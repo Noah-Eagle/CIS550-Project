@@ -211,8 +211,8 @@ async function city_rents(req, res) {
 
 async function city_crime_level(req, res) {
     connection.query(`
-    Select Date, Violation_Num/(Violation_Num+Misdemeanor_Num+Felony_NUM)-0.0001 As Violation_ratio, Misdemeanor_Num/(Violation_Num+Misdemeanor_Num+Felony_NUM)-0.0001 As Misdemeanor_ratio, Felony_Num/(Violation_Num+Misdemeanor_Num+Felony_NUM)-0.0001 As Felony_ratio
-From NYC_Crime_Level_Count;
+    SELECT Date, Violation_Num / (Violation_Num+Misdemeanor_Num + Felony_NUM) - 0.0001 AS Violation_ratio, Misdemeanor_Num / (Violation_Num + Misdemeanor_Num + Felony_NUM) - 0.0001 As Misdemeanor_ratio, Felony_Num / (Violation_Num + Misdemeanor_Num + Felony_NUM) - 0.0001 AS Felony_ratio
+    FROM NYC_Crime_Level_Count
     `, function (error, results, fields) {
     
         if (error) {
@@ -232,23 +232,25 @@ async function search_neighborhood(req, res) {
     const name = req.query.name ? `%${req.query.name}%`: "%"
     connection.query(`
     WITH NB AS (
-    SELECT DISTINCT ZCN.Neighborhood, COUNT(ZCN.ZipCode) as NumZipCodes
-    FROM ZipCodeNeighborhood as ZCN
+    SELECT DISTINCT ZCN.Neighborhood, COUNT(ZCN.ZipCode) AS NumZipCodes
+    FROM ZipCodeNeighborhood AS ZCN
     WHERE ZCN.Neighborhood LIKE '${name}'
     GROUP BY ZCN.Neighborhood
     UNION
-    SELECT DISTINCT ZCN.Neighborhood, COUNT(ZCN.ZipCode) as NumZipCodes
-    FROM ZipCodeNeighborhood as ZCN
-    WHERE ZCN.ZipCode like '${name}'
+    SELECT DISTINCT ZCN.Neighborhood, COUNT(ZCN.ZipCode) AS NumZipCodes
+    FROM ZipCodeNeighborhood AS ZCN
+    WHERE ZCN.ZipCode LIKE '${name}'
     GROUP BY ZCN.Neighborhood
     UNION
-    SELECT DISTINCT ZCN.Neighborhood, COUNT(ZCN.ZipCode) as NumZipCodes
-    FROM ZipCodeNeighborhood as ZCN Join NeighborhoodBorough NB on ZCN.Neighborhood = NB.Neighborhood
-    WHERE NB.Borough like '${name}'
-    GROUP BY ZCN.Neighborhood)
-    SELECT NB.Neighborhood, NB.NumZipCodes, GROUP_CONCAT(ZCN.ZipCode ORDER BY ZCN.ZipCode SEPARATOR  ', ') as ZipCodes
-    FROM NB JOIN ZipCodeNeighborhood ZCN on NB.Neighborhood = ZCN.Neighborhood
-    GROUP BY ZCN.Neighborhood;`, function (error, results, fields) {
+    SELECT DISTINCT ZCN.Neighborhood, COUNT(ZCN.ZipCode) AS NumZipCodes
+    FROM ZipCodeNeighborhood AS ZCN JOIN NeighborhoodBorough NB ON ZCN.Neighborhood = NB.Neighborhood
+    WHERE NB.Borough LIKE '${name}'
+    GROUP BY ZCN.Neighborhood
+    )
+    SELECT NB.Neighborhood, NB.NumZipCodes, GROUP_CONCAT(ZCN.ZipCode ORDER BY ZCN.ZipCode SEPARATOR ', ') AS ZipCodes
+    FROM NB JOIN ZipCodeNeighborhood ZCN ON NB.Neighborhood = ZCN.Neighborhood
+    GROUP BY ZCN.Neighborhood
+    `, function (error, results, fields) {
 
         if (error) {
             res.json({ error: error })
@@ -261,21 +263,23 @@ async function search_neighborhood(req, res) {
 async function neighborhood(req, res) {
     const id = req.query.id ? req.query.id : ""
     connection.query(`
-    WITH CRIME_STAT 
-    (Month, Year, Crime_Count) AS 
-        (SELECT C.Month, C.Year, COUNT(C.ZipCode) as Crime_Count
-        FROM Crime as C JOIN ( SELECT ZipCode
-                               FROM ZipCodeNeighborhood ZCN
-                             WHERE ZCN.Neighborhood= '${id}') zip on zip.ZipCode = C.ZipCode
-        GROUP BY C.Month,C.Year),
-    DS AS(
-        SELECT Rent.Neighborhood, Rent.Month, Rent.Year, Rent.AvgRent, Rent.MinRent, Rent.MaxRent, 
-        CRIME_STAT.Crime_Count, Concat(CAST(Rent.Year AS CHAR(4)), '-', CAST(Rent.Month AS CHAR(2)),'-', '01') as datestring
-        FROM CRIME_STAT RIGHT JOIN Rent on Rent.Month = CRIME_STAT.Month AND Rent.Year = CRIME_STAT.Year
-        WHERE Rent.Neighborhood ='${id}')
+    WITH CRIME_STAT (Month, Year, Crime_Count) AS (
+    SELECT C.Month, C.Year, COUNT(C.ZipCode) as Crime_Count
+    FROM Crime as C JOIN ( SELECT ZipCode
+    FROM ZipCodeNeighborhood ZCN
+    WHERE ZCN.Neighborhood= '${id}') zip on zip.ZipCode = C.ZipCode
+    GROUP BY C.Month,C.Year
+    ),
+    DS AS (
+    SELECT Rent.Neighborhood, Rent.Month, Rent.Year, Rent.AvgRent, Rent.MinRent, Rent.MaxRent, 
+    CRIME_STAT.Crime_Count, Concat(CAST(Rent.Year AS CHAR(4)), '-', CAST(Rent.Month AS CHAR(2)),'-', '01') as datestring
+    FROM CRIME_STAT RIGHT JOIN Rent on Rent.Month = CRIME_STAT.Month AND Rent.Year = CRIME_STAT.Year
+    WHERE Rent.Neighborhood ='${id}'
+    )
     SELECT *,  str_to_date(datestring, '%Y-%m-%d') as date
-        FROM DS
-        ORDER BY date;`, function (error, results, fields) {
+    FROM DS
+    ORDER BY date;
+    `, function (error, results, fields) {
 
         if (error) {
             res.json({ error: error })
@@ -288,39 +292,55 @@ async function neighborhood(req, res) {
 async function neighborhood_rank(req, res) {
     const id = req.query.id ? req.query.id : ""
     connection.query(`
-    WITH IDC AS (SELECT ZCN.Neighborhood, TC.OffenseDescription, COUNT(IF (TC.OffenseLevel = 'Felony', 1, NULL)) AS FCOUNT,  COUNT(IF (TC.OffenseLevel = 'Misdemeanor', 1, NULL)) AS MCOUNT, COUNT(*) as TCOUNT
-    FROM 2020Crimes TC JOIN ZipCodeNeighborhood ZCN on TC.ZipCode = ZCN.ZipCode
+    WITH IDC AS (
+    SELECT ZCN.Neighborhood, TC.OffenseDescription, COUNT(IF (TC.OffenseLevel = 'Felony', 1, NULL)) AS FCOUNT,  COUNT(IF (TC.OffenseLevel = 'Misdemeanor', 1, NULL)) AS MCOUNT, COUNT(*) AS TCOUNT
+    FROM 2020Crimes TC JOIN ZipCodeNeighborhood ZCN ON TC.ZipCode = ZCN.ZipCode
     WHERE ZCN.Neighborhood = '${id}'
-    GROUP BY (TC.OffenseDescription)),
-    FMOST AS (SELECT Neighborhood, OffenseDescription AS FMOST
+    GROUP BY (TC.OffenseDescription)
+    ),
+    FMOST AS (
+    SELECT Neighborhood, OffenseDescription AS FMOST
     FROM IDC
-    WHERE IDC.FCOUNT >= ALL(SELECT FCOUNT FROM IDC)),
-        MMOST AS(
+    WHERE IDC.FCOUNT >= ALL(SELECT FCOUNT FROM IDC)
+    ),
+    MMOST AS (
     SELECT Neighborhood, OffenseDescription AS MMOST
     FROM IDC
-    WHERE IDC.MCOUNT >= ALL(SELECT MCOUNT FROM IDC)),
-    NB AS (SELECT *
-    From NeighborhoodBorough
-    WHERE Neighborhood = '${id}'),
-    NBS AS (SELECT NB2.Neighborhood, NB2.Borough
-    FROM NeighborhoodBorough NB2, NB
-    WHERE NB.Borough = NB2.Borough),
-    NBR AS(SELECT R.Neighborhood, AVG(R.AvgRent) as AvgRent
-        FROM Rent R
-        WHERE Year = 2020
-        GROUP BY R.Neighborhood),
-    NBSZ AS( SELECT ZCN.ZipCode, NBS.Neighborhood, NBS.Borough
-    FROM ZipCodeNeighborhood ZCN JOIN NBS on ZCN.Neighborhood=NBS.Neighborhood),
-    Counts AS(
-    SELECT NBSZ.Neighborhood, COUNT(TC.CrimeId) AS Total, COUNT(IF (TC.OffenseLevel = 'Felony', 1, NULL)) AS Felonies,
-        COUNT(IF (TC.OffenseLevel = 'Misdemeanor', 1, NULL)) as Misdemeanors, NBR.AvgRent, NBSZ.Borough
-    FROM 2020Crimes TC JOIN NBSZ ON NBSZ.ZipCode = TC.ZipCode JOIN NBR ON NBSZ.Neighborhood = NBR.Neighborhood
-    GROUP BY NBSZ.Neighborhood),
-    NBRank as (
-    SELECT Counts.Borough, Counts.Neighborhood, RANK() OVER (ORDER BY Counts.Total DESC) AS TRank ,  RANK() OVER (ORDER BY Counts.Felonies DESC) AS FRank , RANK() OVER (ORDER BY Counts.Misdemeanors DESC) AS MRank,  RANK() OVER (ORDER BY Counts.AvgRent DESC) as RentRank
-    FROM Counts)
+    WHERE IDC.MCOUNT >= ALL(SELECT MCOUNT FROM IDC)
+    ),
+    NB AS (
     SELECT *
-    FROM NBRank NATURAL JOIN FMOST NATURAL Join MMOST;`, function (error, results, fields) {
+    FROM NeighborhoodBorough
+    WHERE Neighborhood = '${id}'
+    ),
+    NBS AS (
+    SELECT NB2.Neighborhood, NB2.Borough
+    FROM NeighborhoodBorough NB2, NB
+    WHERE NB.Borough = NB2.Borough
+    ),
+    NBR AS (
+    SELECT R.Neighborhood, AVG(R.AvgRent) AS AvgRent
+    FROM Rent R
+    WHERE Year = 2020
+    GROUP BY R.Neighborhood
+    ),
+    NBSZ AS (
+    SELECT ZCN.ZipCode, NBS.Neighborhood, NBS.Borough
+    FROM ZipCodeNeighborhood ZCN JOIN NBS ON ZCN.Neighborhood=NBS.Neighborhood
+    ),
+    Counts AS (
+    SELECT NBSZ.Neighborhood, COUNT(TC.CrimeId) AS Total, COUNT(IF (TC.OffenseLevel = 'Felony', 1, NULL)) AS Felonies,
+    COUNT(IF (TC.OffenseLevel = 'Misdemeanor', 1, NULL)) AS Misdemeanors, NBR.AvgRent, NBSZ.Borough
+    FROM 2020Crimes TC JOIN NBSZ ON NBSZ.ZipCode = TC.ZipCode JOIN NBR ON NBSZ.Neighborhood = NBR.Neighborhood
+    GROUP BY NBSZ.Neighborhood
+    ),
+    NBRank AS (
+    SELECT Counts.Borough, Counts.Neighborhood, RANK() OVER (ORDER BY Counts.Total DESC) AS TRank, RANK() OVER (ORDER BY Counts.Felonies DESC) AS FRank, RANK() OVER (ORDER BY Counts.Misdemeanors DESC) AS MRank, RANK() OVER (ORDER BY Counts.AvgRent DESC) AS RentRank
+    FROM Counts
+    )
+    SELECT *
+    FROM NBRank NATURAL JOIN FMOST NATURAL JOIN MMOST
+    `, function (error, results, fields) {
 
         if (error) {
             res.json({ error: error })
@@ -332,10 +352,12 @@ async function neighborhood_rank(req, res) {
 
 async function city_crime_age(req, res) {
     connection.query(`
-    With AddTotal AS ( SELECT *, AG1+AG2+AG3+AG4+AG5 As Total
-        From NYC_Crime_AgeGroup_Count )
-        SELECT Date, AG1/Total- 0.0001 AS AG1_ratio , AG2/Total- 0.0001 AS AG2_ratio, AG3/Total- 0.0001 AS AG3_ratio, AG4/Total- 0.0001 AS AG4_ratio, AG5/Total- 0.0001 AS AG5_ratio
-        From AddTotal        
+    WITH AddTotal AS (
+    SELECT *, AG1 + AG2 + AG3 + AG4 + AG5 AS Total
+    FROM NYC_Crime_AgeGroup_Count
+    )
+    SELECT Date, AG1 / Total - 0.0001 AS AG1_ratio, AG2 / Total - 0.0001 AS AG2_ratio, AG3 / Total - 0.0001 AS AG3_ratio, AG4 / Total - 0.0001 AS AG4_ratio, AG5 / Total - 0.0001 AS AG5_ratio
+    FROM AddTotal        
     `, function (error, results, fields) {
     
         if (error) {
