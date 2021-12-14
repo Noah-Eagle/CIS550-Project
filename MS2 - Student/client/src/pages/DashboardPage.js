@@ -9,7 +9,6 @@ import MenuBar from '../components/MenuBar';
 import { getBoroughSummary, getCityRents, getCityCrimeLevel, getCityCrimeAge} from '../fetcher';
 //import {  } from '../fetcher';
 import { AreaChart, Area, BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Label } from 'recharts';
-import { Button } from "shards-react";
 const { Option } = Select;
 
 const toPercent = (decimal, fixed = 0) => `${(decimal * 100).toFixed(fixed)}%`;
