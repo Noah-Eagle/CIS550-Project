@@ -1,6 +1,6 @@
 {
     "server_host": "nyc-server3.us-east-2.elasticbeanstalk.com",
     "server_port":"80",
-    "local_server_host": "127.0.0.1",
-    "local_server_port":"8080"
+    "_server_host": "127.0.0.1",
+    "_server_port":"8080"
 }
