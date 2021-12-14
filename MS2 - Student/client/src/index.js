@@ -12,7 +12,6 @@ import BoroughTrendsPage from './pages/BoroughTrendsPage';
 import FilterPage from './pages/FilterPage';
 import SearchPage from './pages/SearchPage';
 import DashboardPage from './pages/DashboardPage';
-// import MatchesPage from './pages/MatchesPage';
 
 import 'antd/dist/antd.css';
 
@@ -52,11 +51,6 @@ ReactDOM.render(
 							render={() => (
 								<DashboardPage />
 							)}/>
-        {/* <Route exact
-							path="/matches"
-							render={() => (
-								<MatchesPage />
-							)}/> */}
       </Switch>
     </Router>
   </div>,

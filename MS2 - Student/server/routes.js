@@ -382,11 +382,4 @@ module.exports = {
     search_neighborhood,
     neighborhood,
     neighborhood_rank
-    // jersey,
-    // all_matches,
-    // all_players,
-    // match,
-    // player,
-    // search_matches,
-    // search_players
 }
