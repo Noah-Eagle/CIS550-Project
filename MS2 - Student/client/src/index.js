@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom';
 import {
 	BrowserRouter as Router,
 	Route,
-	Switch
+	Switch,
+	Redirect
 } from 'react-router-dom';
 
 import BoroughPage from './pages/BoroughPage';
@@ -23,6 +24,9 @@ ReactDOM.render(
   <div>
     <Router>
       <Switch>
+	    <Route exact path="/">
+			<Redirect to="/dashboard"/>
+		</Route>
         <Route exact
 							path="/borough/summary"
 							render={() => (
