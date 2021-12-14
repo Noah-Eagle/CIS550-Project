@@ -1,3 +1,4 @@
+
 {
     "rds_host": "database-2.c0iuhrpmd4ph.us-east-2.rds.amazonaws.com",
     "rds_port": "3306",
@@ -6,5 +7,4 @@
     "rds_db": "NYC",
     "server_host": "127.0.0.1",
     "server_port":"8080"
-
 }

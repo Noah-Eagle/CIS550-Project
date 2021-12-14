@@ -33,21 +33,10 @@ app.get('/city/crimelevel', routes.city_crime_level)
 app.get('/city/crimeage', routes.city_crime_age)
 
 
-// // Route 4 - register as GET 
-// app.get('/players', routes.all_players)
-
-// // Route 7 - register as GET 
-// app.get('/search/matches', routes.search_matches)
-
-// // Route 8 - register as GET 
-// app.get('/search/players', routes.search_players)
-
-
-
-
+var port = process.env.PORT || 8080;
 
 app.listen(config.server_port, () => {
-    console.log(`Server running at http://${config.server_host}:${config.server_port}/`);
+    console.log(`Server running at http://${config.server_host}:${port}/`);
 });
 
 module.exports = app;
