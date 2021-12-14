@@ -304,7 +304,7 @@ async function neighborhood_rank(req, res) {
     connection.query(`
     WITH IDC AS (
     SELECT ZCN.Neighborhood, TC.OffenseDescription, COUNT(IF (TC.OffenseLevel = 'Felony', 1, NULL)) AS FCOUNT,  COUNT(IF (TC.OffenseLevel = 'Misdemeanor', 1, NULL)) AS MCOUNT, COUNT(*) AS TCOUNT
-    FROM 2020Crimes TC JOIN ZipCodeNeighborhood ZCN ON TC.ZipCode = ZCN.ZipCode
+    FROM 2020Crimes TC RIGHT JOIN ZipCodeNeighborhood ZCN ON TC.ZipCode = ZCN.ZipCode
     WHERE ZCN.Neighborhood = '${id}'
     GROUP BY (TC.OffenseDescription)
     ),
@@ -341,11 +341,17 @@ async function neighborhood_rank(req, res) {
     Counts AS (
     SELECT NBSZ.Neighborhood, COUNT(TC.CrimeId) AS Total, COUNT(IF (TC.OffenseLevel = 'Felony', 1, NULL)) AS Felonies,
     COUNT(IF (TC.OffenseLevel = 'Misdemeanor', 1, NULL)) AS Misdemeanors, NBR.AvgRent, NBSZ.Borough
-    FROM 2020Crimes TC JOIN NBSZ ON NBSZ.ZipCode = TC.ZipCode JOIN NBR ON NBSZ.Neighborhood = NBR.Neighborhood
+    FROM 2020Crimes TC JOIN NBSZ ON NBSZ.ZipCode = TC.ZipCode LEFT JOIN NBR ON NBSZ.Neighborhood = NBR.Neighborhood
+    GROUP BY NBSZ.Neighborhood
+    UNION
+    SELECT NBSZ.Neighborhood, COUNT(TC.CrimeId) AS Total, COUNT(IF (TC.OffenseLevel = 'Felony', 1, NULL)) AS Felonies,
+    COUNT(IF (TC.OffenseLevel = 'Misdemeanor', 1, NULL)) AS Misdemeanors, NBR.AvgRent, NBSZ.Borough
+    FROM NBR RIGHT JOIN NBSZ ON NBR.Neighborhood = NBSZ.Neighborhood LEFT JOIN 2020Crimes TC ON NBSZ.ZipCode = TC.ZipCode
     GROUP BY NBSZ.Neighborhood
     ),
     NBRank AS (
-    SELECT Counts.Borough, Counts.Neighborhood, RANK() OVER (ORDER BY Counts.Total DESC) AS TRank, RANK() OVER (ORDER BY Counts.Felonies DESC) AS FRank, RANK() OVER (ORDER BY Counts.Misdemeanors DESC) AS MRank, RANK() OVER (ORDER BY Counts.AvgRent DESC) AS RentRank
+    SELECT Counts.Borough, Counts.Neighborhood, RANK() OVER (ORDER BY Counts.Total DESC) AS TRank, RANK() OVER (ORDER BY Counts.Felonies DESC) AS FRank, RANK() OVER (ORDER BY Counts.Misdemeanors DESC) AS MRank,
+    CASE WHEN Counts.AvgRent IS NULL THEN NULL ELSE RANK() OVER (ORDER BY Counts.AvgRent DESC) END AS RentRank
     FROM Counts
     )
     SELECT *
