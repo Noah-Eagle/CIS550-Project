@@ -9,7 +9,7 @@ const connection = mysql.createPool({
     port: config.rds_port,
     database: config.rds_db
 });
-connection.connect();
+// connection.connect();
 
 
 async function borough_summary(req, res) {
