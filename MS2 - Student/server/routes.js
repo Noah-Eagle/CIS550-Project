@@ -263,9 +263,9 @@ async function search_neighborhood(req, res) {
 async function neighborhood(req, res) {
     const id = req.query.id ? req.query.id : ""
     connection.query(`
-    WITH CRIME_STAT (Month, Year, Crime_Count) AS (
-    SELECT C.Month, C.Year, COUNT(C.ZipCode) as Crime_Count
-    FROM Crime as C JOIN ( SELECT ZipCode
+    WITH CRIME_STAT (Month, Year, Crime_Count,Neighborhood) AS (
+    SELECT C.Month, C.Year, COUNT(C.ZipCode) as Crime_Count, zip.Neighborhood
+    FROM Crime as C JOIN ( SELECT ZipCode, Neighborhood
     FROM ZipCodeNeighborhood ZCN
     WHERE ZCN.Neighborhood= '${id}') zip on zip.ZipCode = C.ZipCode
     GROUP BY C.Month,C.Year
@@ -275,6 +275,16 @@ async function neighborhood(req, res) {
     CRIME_STAT.Crime_Count, Concat(CAST(Rent.Year AS CHAR(4)), '-', CAST(Rent.Month AS CHAR(2)),'-', '01') as datestring
     FROM CRIME_STAT RIGHT JOIN Rent ON Rent.Month = CRIME_STAT.Month AND Rent.Year = CRIME_STAT.Year
     WHERE Rent.Neighborhood ='${id}'
+    UNION
+    SELECT Rent.Neighborhood,
+           Rent.Month,
+           Rent.Year,
+           Rent.AvgRent,
+           Rent.MinRent,
+           Rent.MaxRent,
+           CRIME_STAT.Crime_Count,
+           Concat(CAST(CRIME_STAT.Year AS CHAR(4)), '-', CAST(CRIME_STAT.Month AS CHAR(2)), '-', '01') as datestring
+    FROM CRIME_STAT LEFT JOIN Rent ON Rent.Month = CRIME_STAT.Month AND Rent.Year = CRIME_STAT.Year AND Rent.Neighborhood = CRIME_STAT.Neighborhood
     )
     SELECT *,  str_to_date(datestring, '%Y-%m-%d') as date
     FROM DS
