@@ -1,4 +1,4 @@
 {
-    "server_host": "http://nyc-server3.us-east-2.elasticbeanstalk.com",
+    "server_host": "nyc-server3.us-east-2.elasticbeanstalk.com",
     "server_port":"80"
 }
